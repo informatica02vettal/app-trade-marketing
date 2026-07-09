@@ -1,0 +1,10 @@
+package ve.com.vettal.trademarketing.features.mercado.model;
+
+public enum TipoHallazgo {
+	PRECIO_COMPETENCIA,
+	NUEVO_PRODUCTO,
+	ACTIVIDAD_PROMOCIONAL,
+	MATERIAL_PUBLICITARIO_COMPETENCIA,
+	OPORTUNIDAD_MERCADO,
+	CLIENTE_NO_REGISTRADO
+}

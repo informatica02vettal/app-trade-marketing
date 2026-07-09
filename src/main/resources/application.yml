@@ -1,0 +1,78 @@
+spring:
+  application:
+    name: app-trade-marketing
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MariaDBDialect
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: America/Caracas
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: ${SERVER_PORT:8081}
+  servlet:
+    context-path: /
+  tomcat:
+    threads:
+      max: 200
+    max-connections: 8192
+    connection-timeout: 20000
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+
+# API externa (vettal-backend) de donde se consultan los clientes del ERP.
+# Se consume vía HTTP con autenticación Basic — esta app NO abre una conexión
+# de base de datos al ERP, solo llama a su endpoint REST ya existente.
+app:
+  clientes-api:
+    base-url: ${CLIENTES_API_BASE_URL}
+    username: ${CLIENTES_API_USER}
+    password: ${CLIENTES_API_PASSWORD}
+    connect-timeout-ms: ${CLIENTES_API_CONNECT_TIMEOUT_MS:5000}
+    read-timeout-ms: ${CLIENTES_API_READ_TIMEOUT_MS:10000}
+  admin-seed:
+    email: ${ADMIN_EMAIL:admin@vettal.com.ve}
+    password: ${ADMIN_PASSWORD:CAMBIA_ESTA_CLAVE_TEMPORAL}
+    nombre: ${ADMIN_NOMBRE:Administrador}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:*}
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
+  allowed-headers: Authorization,Content-Type,Accept,Origin,X-Requested-With
+
+logging:
+  level:
+    ve.com.vettal.trademarketing: INFO
+    org.hibernate.SQL: WARN
+    org.apache.tomcat: INFO
+  file:
+    name: logs/app-trade-marketing.log
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method

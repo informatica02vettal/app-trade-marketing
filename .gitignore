@@ -32,3 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 .claude/
+
+### Entorno / secretos ###
+.env
+logs/
+/logs/
