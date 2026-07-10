@@ -16,7 +16,8 @@ public class AuditoriaMarcaResponseDto {
 
 	private Long id;
 	private Long visitaId;
-	private String marca;
+	private Long marcaId;
+	private String marcaNombre;
 	private Integer presenciaPct;
 	private Integer anaquelPct;
 	private Integer frentesVettal;

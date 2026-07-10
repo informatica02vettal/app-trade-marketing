@@ -12,6 +12,8 @@ import ve.com.vettal.trademarketing.features.auditorias.mapper.AuditoriaMarcaMap
 import ve.com.vettal.trademarketing.features.auditorias.model.AuditoriaMarcaModel;
 import ve.com.vettal.trademarketing.features.auditorias.model.EstadoPop;
 import ve.com.vettal.trademarketing.features.auditorias.repository.AuditoriaMarcaRepository;
+import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
+import ve.com.vettal.trademarketing.features.catalogos.repository.MarcaRepository;
 import ve.com.vettal.trademarketing.features.visitas.model.EstadoVisita;
 import ve.com.vettal.trademarketing.features.visitas.model.VisitaModel;
 import ve.com.vettal.trademarketing.features.visitas.repository.VisitaRepository;
@@ -22,6 +24,7 @@ public class AuditoriaMarcaService {
 
 	private final AuditoriaMarcaRepository auditoriaMarcaRepository;
 	private final VisitaRepository visitaRepository;
+	private final MarcaRepository marcaRepository;
 	private final AuditoriaMarcaMapper auditoriaMarcaMapper;
 
 	@Transactional(readOnly = true)
@@ -38,6 +41,9 @@ public class AuditoriaMarcaService {
 			throw new BusinessException("Solo se pueden auditar marcas en visitas en curso");
 		}
 
+		MarcaModel marca = marcaRepository.findById(request.getMarcaId())
+				.orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada con id " + request.getMarcaId()));
+
 		// Regla 1: sin exhibidor de marca no puede haber producto en exhibidor.
 		boolean productoExhibidor = request.isExhibidorMarca() && request.isProductoExhibidor();
 
@@ -53,7 +59,7 @@ public class AuditoriaMarcaService {
 
 		AuditoriaMarcaModel auditoria = AuditoriaMarcaModel.builder()
 				.visita(visita)
-				.marca(request.getMarca())
+				.marca(marca)
 				.presenciaPct(request.getPresenciaPct())
 				.anaquelPct(anaquelPct)
 				.frentesVettal(frentesVettal)

@@ -23,7 +23,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
 import ve.com.vettal.trademarketing.features.usuarios.model.UsuarioModel;
+import ve.com.vettal.trademarketing.features.visitas.model.VisitaModel;
 
 @Entity
 @Table(name = "solicitudes")
@@ -38,18 +40,17 @@ public class SolicitudModel {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "erp_cliente_id", length = 10)
-	private String erpClienteId;
-
-	@Column(name = "cliente_nombre", nullable = false, length = 200)
-	private String clienteNombre;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "visita_id", nullable = false)
+	private VisitaModel visita;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "categoria", nullable = false, length = 20)
 	private CategoriaSolicitud categoria;
 
-	@Column(name = "marca", length = 100)
-	private String marca;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "marca_id", nullable = false)
+	private MarcaModel marca;
 
 	@Column(name = "observaciones", columnDefinition = "TEXT")
 	private String observaciones;

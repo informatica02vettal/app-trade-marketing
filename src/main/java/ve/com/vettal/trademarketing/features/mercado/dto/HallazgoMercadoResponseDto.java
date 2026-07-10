@@ -15,13 +15,12 @@ import ve.com.vettal.trademarketing.features.mercado.model.TipoHallazgo;
 public class HallazgoMercadoResponseDto {
 
 	private Long id;
+	private Long visitaId;
 	private TipoHallazgo tipo;
-	private String erpClienteId;
-	private String clienteNombre;
-	private String categoriaProducto;
-	private String marca;
+	private Long categoriaProductoId;
+	private String categoriaProductoNombre;
 	private String marcaCompetencia;
-	private String oportunidadTexto;
+	private String observacionTexto;
 	private String detalle;
 	private Long usuarioId;
 	private String usuarioNombre;

@@ -14,14 +14,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ve.com.vettal.trademarketing.common.dto.ApiResponseDto;
 import ve.com.vettal.trademarketing.features.mercado.constants.MercadoConstants;
-import ve.com.vettal.trademarketing.features.mercado.dto.ClienteProspectoRequestDto;
-import ve.com.vettal.trademarketing.features.mercado.dto.ClienteProspectoResponseDto;
 import ve.com.vettal.trademarketing.features.mercado.dto.HallazgoMercadoRequestDto;
 import ve.com.vettal.trademarketing.features.mercado.dto.HallazgoMercadoResponseDto;
 import ve.com.vettal.trademarketing.features.mercado.model.TipoHallazgo;
-import ve.com.vettal.trademarketing.features.mercado.service.ClienteProspectoService;
 import ve.com.vettal.trademarketing.features.mercado.service.HallazgoMercadoService;
 
+/**
+ * Inteligencia de mercado: precios de competencia, nuevos productos, material
+ * publicitario de competencia y observaciones. El flujo de "cliente no
+ * registrado" vive en el módulo Visitas, y "Actividad promocional" se cubre
+ * en Solicitudes — ninguno de los dos pertenece a Mercado.
+ */
 @RestController
 @RequestMapping(MercadoConstants.API_BASE_PATH_MERCADO)
 @RequiredArgsConstructor
@@ -30,7 +33,6 @@ import ve.com.vettal.trademarketing.features.mercado.service.HallazgoMercadoServ
 public class MercadoController {
 
 	private final HallazgoMercadoService hallazgoMercadoService;
-	private final ClienteProspectoService clienteProspectoService;
 
 	@GetMapping
 	public ResponseEntity<ApiResponseDto<List<HallazgoMercadoResponseDto>>> listar(
@@ -45,18 +47,5 @@ public class MercadoController {
 			@Valid @RequestBody HallazgoMercadoRequestDto request) {
 		HallazgoMercadoResponseDto hallazgo = hallazgoMercadoService.crear(request);
 		return ResponseEntity.status(201).body(ApiResponseDto.created(hallazgo, "Hallazgo de mercado creado"));
-	}
-
-	@GetMapping(MercadoConstants.PATH_CLIENTES_PROSPECTO)
-	public ResponseEntity<ApiResponseDto<List<ClienteProspectoResponseDto>>> listarClientesProspecto() {
-		List<ClienteProspectoResponseDto> prospectos = clienteProspectoService.listar();
-		return ResponseEntity.ok(ApiResponseDto.ok(prospectos, "Clientes prospecto obtenidos"));
-	}
-
-	@PostMapping(MercadoConstants.PATH_CLIENTES_PROSPECTO)
-	public ResponseEntity<ApiResponseDto<ClienteProspectoResponseDto>> crearClienteProspecto(
-			@Valid @RequestBody ClienteProspectoRequestDto request) {
-		ClienteProspectoResponseDto prospecto = clienteProspectoService.crear(request);
-		return ResponseEntity.status(201).body(ApiResponseDto.created(prospecto, "Cliente prospecto registrado"));
 	}
 }

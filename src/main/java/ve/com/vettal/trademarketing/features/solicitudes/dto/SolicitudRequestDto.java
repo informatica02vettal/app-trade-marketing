@@ -14,15 +14,14 @@ import ve.com.vettal.trademarketing.features.solicitudes.model.CategoriaSolicitu
 @AllArgsConstructor
 public class SolicitudRequestDto {
 
-	private String erpClienteId;
-
-	@NotNull(message = "El nombre del cliente es obligatorio")
-	private String clienteNombre;
+	@NotNull(message = "La visita es obligatoria")
+	private Long visitaId;
 
 	@NotNull(message = "La categoría es obligatoria")
 	private CategoriaSolicitud categoria;
 
-	private String marca;
+	@NotNull(message = "La marca es obligatoria")
+	private Long marcaId;
 
 	private String observaciones;
 

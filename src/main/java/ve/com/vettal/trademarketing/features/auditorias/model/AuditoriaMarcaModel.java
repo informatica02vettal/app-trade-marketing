@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
 import ve.com.vettal.trademarketing.features.visitas.model.VisitaModel;
 
 @Entity
@@ -36,8 +37,9 @@ public class AuditoriaMarcaModel {
 	@JoinColumn(name = "visita_id", nullable = false)
 	private VisitaModel visita;
 
-	@Column(name = "marca", nullable = false, length = 100)
-	private String marca;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "marca_id", nullable = false)
+	private MarcaModel marca;
 
 	@Column(name = "presencia_pct", nullable = false)
 	private Integer presenciaPct;

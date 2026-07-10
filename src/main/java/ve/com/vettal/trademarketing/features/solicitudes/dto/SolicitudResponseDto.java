@@ -16,10 +16,12 @@ import ve.com.vettal.trademarketing.features.solicitudes.model.EstadoSolicitud;
 public class SolicitudResponseDto {
 
 	private Long id;
+	private Long visitaId;
 	private String erpClienteId;
 	private String clienteNombre;
 	private CategoriaSolicitud categoria;
-	private String marca;
+	private Long marcaId;
+	private String marcaNombre;
 	private String observaciones;
 	private Long solicitanteId;
 	private String solicitanteNombre;

@@ -8,7 +8,7 @@ public interface InstalacionEjecucionRepository extends JpaRepository<Instalacio
 
 	List<InstalacionEjecucionModel> findByUsuarioId(Long usuarioId);
 
-	List<InstalacionEjecucionModel> findByErpClienteId(String erpClienteId);
+	List<InstalacionEjecucionModel> findByVisitaId(Long visitaId);
 
-	List<InstalacionEjecucionModel> findByUsuarioIdAndErpClienteId(Long usuarioId, String erpClienteId);
+	List<InstalacionEjecucionModel> findByUsuarioIdAndVisitaId(Long usuarioId, Long visitaId);
 }

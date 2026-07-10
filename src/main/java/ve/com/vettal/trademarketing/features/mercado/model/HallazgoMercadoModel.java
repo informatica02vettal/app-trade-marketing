@@ -21,7 +21,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ve.com.vettal.trademarketing.features.catalogos.model.CategoriaProductoMercadoModel;
 import ve.com.vettal.trademarketing.features.usuarios.model.UsuarioModel;
+import ve.com.vettal.trademarketing.features.visitas.model.VisitaModel;
 
 @Entity
 @Table(name = "hallazgos_mercado")
@@ -36,27 +38,23 @@ public class HallazgoMercadoModel {
 	@Column(name = "id")
 	private Long id;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "visita_id", nullable = false)
+	private VisitaModel visita;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "tipo", nullable = false, length = 40)
 	private TipoHallazgo tipo;
 
-	@Column(name = "erp_cliente_id", length = 10)
-	private String erpClienteId;
-
-	@Column(name = "cliente_nombre", length = 200)
-	private String clienteNombre;
-
-	@Column(name = "categoria_producto", length = 50)
-	private String categoriaProducto;
-
-	@Column(name = "marca", length = 100)
-	private String marca;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "categoria_producto_id", nullable = true)
+	private CategoriaProductoMercadoModel categoriaProducto;
 
 	@Column(name = "marca_competencia", length = 100)
 	private String marcaCompetencia;
 
-	@Column(name = "oportunidad_texto", columnDefinition = "TEXT")
-	private String oportunidadTexto;
+	@Column(name = "observacion_texto", columnDefinition = "TEXT")
+	private String observacionTexto;
 
 	@Column(name = "detalle", columnDefinition = "TEXT")
 	private String detalle;

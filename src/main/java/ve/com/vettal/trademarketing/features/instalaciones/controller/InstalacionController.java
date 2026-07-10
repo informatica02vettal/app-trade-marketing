@@ -30,8 +30,8 @@ public class InstalacionController {
 	@GetMapping
 	public ResponseEntity<ApiResponseDto<List<InstalacionResponseDto>>> listar(
 			@RequestParam(required = false) Long usuarioId,
-			@RequestParam(required = false) String erpClienteId) {
-		List<InstalacionResponseDto> instalaciones = instalacionService.listar(usuarioId, erpClienteId);
+			@RequestParam(required = false) Long visitaId) {
+		List<InstalacionResponseDto> instalaciones = instalacionService.listar(usuarioId, visitaId);
 		return ResponseEntity.ok(ApiResponseDto.ok(instalaciones, "Instalaciones obtenidas"));
 	}
 

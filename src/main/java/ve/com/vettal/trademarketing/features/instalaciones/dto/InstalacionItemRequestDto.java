@@ -1,6 +1,7 @@
 package ve.com.vettal.trademarketing.features.instalaciones.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class InstalacionItemRequestDto {
 
-	@NotBlank(message = "El material es obligatorio")
-	private String material;
+	@NotNull(message = "El material es obligatorio")
+	private Long materialId;
 
-	private String fotoUrl;
+	private List<String> fotos;
 }

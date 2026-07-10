@@ -1,8 +1,7 @@
-package ve.com.vettal.trademarketing.features.mercado.dto;
+package ve.com.vettal.trademarketing.features.visitas.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClienteProspectoRequestDto {
+
+	@NotNull(message = "La visita es obligatoria")
+	private Long visitaId;
 
 	@NotBlank(message = "El nombre es obligatorio")
 	private String nombre;
@@ -22,12 +24,6 @@ public class ClienteProspectoRequestDto {
 	private String whatsapp;
 
 	private String telefono;
-
-	@NotNull(message = "La latitud GPS es obligatoria")
-	private BigDecimal gpsLat;
-
-	@NotNull(message = "La longitud GPS es obligatoria")
-	private BigDecimal gpsLng;
 
 	@NotBlank(message = "La foto de la fachada es obligatoria")
 	private String fotoFachadaUrl;

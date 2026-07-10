@@ -1,7 +1,6 @@
 package ve.com.vettal.trademarketing.features.instalaciones.dto;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -16,13 +15,11 @@ import ve.com.vettal.trademarketing.features.instalaciones.model.CategoriaInstal
 @AllArgsConstructor
 public class InstalacionRequestDto {
 
-	private String erpClienteId;
+	@NotNull(message = "La visita es obligatoria")
+	private Long visitaId;
 
-	@NotBlank(message = "El nombre del cliente es obligatorio")
-	private String clienteNombre;
-
-	@NotBlank(message = "La marca es obligatoria")
-	private String marca;
+	@NotNull(message = "La marca es obligatoria")
+	private Long marcaId;
 
 	@NotNull(message = "La categoría es obligatoria")
 	private CategoriaInstalacion categoria;

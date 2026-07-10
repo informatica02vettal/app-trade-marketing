@@ -10,6 +10,8 @@ import ve.com.vettal.trademarketing.features.auditorias.model.AuditoriaMarcaMode
 public interface AuditoriaMarcaMapper {
 
 	@Mapping(target = "visitaId", source = "visita.id")
+	@Mapping(target = "marcaId", source = "marca.id")
+	@Mapping(target = "marcaNombre", source = "marca.nombre")
 	AuditoriaMarcaResponseDto toDto(AuditoriaMarcaModel model);
 
 	List<AuditoriaMarcaResponseDto> toDtoList(List<AuditoriaMarcaModel> models);

@@ -8,15 +8,23 @@ import org.springframework.transaction.annotation.Transactional;
 import ve.com.vettal.trademarketing.common.exception.BusinessException;
 import ve.com.vettal.trademarketing.common.exception.ResourceNotFoundException;
 import ve.com.vettal.trademarketing.common.security.AuthenticatedUserProvider;
+import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
+import ve.com.vettal.trademarketing.features.catalogos.model.MaterialModel;
+import ve.com.vettal.trademarketing.features.catalogos.repository.MarcaRepository;
+import ve.com.vettal.trademarketing.features.catalogos.repository.MaterialRepository;
 import ve.com.vettal.trademarketing.features.instalaciones.dto.InstalacionItemRequestDto;
 import ve.com.vettal.trademarketing.features.instalaciones.dto.InstalacionRequestDto;
 import ve.com.vettal.trademarketing.features.instalaciones.dto.InstalacionResponseDto;
 import ve.com.vettal.trademarketing.features.instalaciones.mapper.InstalacionMapper;
 import ve.com.vettal.trademarketing.features.instalaciones.model.EstadoInstalacion;
 import ve.com.vettal.trademarketing.features.instalaciones.model.InstalacionEjecucionModel;
+import ve.com.vettal.trademarketing.features.instalaciones.model.InstalacionItemFotoModel;
 import ve.com.vettal.trademarketing.features.instalaciones.model.InstalacionItemModel;
 import ve.com.vettal.trademarketing.features.instalaciones.repository.InstalacionEjecucionRepository;
 import ve.com.vettal.trademarketing.features.usuarios.model.UsuarioModel;
+import ve.com.vettal.trademarketing.features.visitas.model.EstadoVisita;
+import ve.com.vettal.trademarketing.features.visitas.model.VisitaModel;
+import ve.com.vettal.trademarketing.features.visitas.repository.VisitaRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -24,23 +32,26 @@ import ve.com.vettal.trademarketing.features.usuarios.model.UsuarioModel;
 public class InstalacionService {
 
 	private final InstalacionEjecucionRepository instalacionEjecucionRepository;
+	private final VisitaRepository visitaRepository;
+	private final MarcaRepository marcaRepository;
+	private final MaterialRepository materialRepository;
 	private final InstalacionMapper instalacionMapper;
 	private final AuthenticatedUserProvider authenticatedUserProvider;
 
 	@Transactional(readOnly = true)
-	public List<InstalacionResponseDto> listar(Long usuarioId, String erpClienteId) {
+	public List<InstalacionResponseDto> listar(Long usuarioId, Long visitaId) {
 		Long usuarioIdEfectivo = usuarioId;
 		if (!authenticatedUserProvider.esAdminOSupervisor() && usuarioIdEfectivo == null) {
 			usuarioIdEfectivo = authenticatedUserProvider.getUsuarioActual().getId();
 		}
 
 		List<InstalacionEjecucionModel> instalaciones;
-		if (usuarioIdEfectivo != null && erpClienteId != null) {
-			instalaciones = instalacionEjecucionRepository.findByUsuarioIdAndErpClienteId(usuarioIdEfectivo, erpClienteId);
+		if (usuarioIdEfectivo != null && visitaId != null) {
+			instalaciones = instalacionEjecucionRepository.findByUsuarioIdAndVisitaId(usuarioIdEfectivo, visitaId);
 		} else if (usuarioIdEfectivo != null) {
 			instalaciones = instalacionEjecucionRepository.findByUsuarioId(usuarioIdEfectivo);
-		} else if (erpClienteId != null) {
-			instalaciones = instalacionEjecucionRepository.findByErpClienteId(erpClienteId);
+		} else if (visitaId != null) {
+			instalaciones = instalacionEjecucionRepository.findByVisitaId(visitaId);
 		} else {
 			instalaciones = instalacionEjecucionRepository.findAll();
 		}
@@ -58,12 +69,20 @@ public class InstalacionService {
 			throw new BusinessException("Debe registrar al menos un ítem de material instalado");
 		}
 
+		VisitaModel visita = visitaRepository.findById(request.getVisitaId())
+				.orElseThrow(() -> new ResourceNotFoundException("Visita no encontrada con id " + request.getVisitaId()));
+		if (visita.getEstado() != EstadoVisita.EN_CURSO) {
+			throw new BusinessException("Solo se pueden registrar instalaciones en visitas en curso");
+		}
+
+		MarcaModel marca = marcaRepository.findById(request.getMarcaId())
+				.orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada con id " + request.getMarcaId()));
+
 		UsuarioModel usuarioActual = authenticatedUserProvider.getUsuarioActual();
 
 		InstalacionEjecucionModel instalacion = InstalacionEjecucionModel.builder()
-				.erpClienteId(request.getErpClienteId())
-				.clienteNombre(request.getClienteNombre())
-				.marca(request.getMarca())
+				.visita(visita)
+				.marca(marca)
 				.categoria(request.getCategoria())
 				.usuario(usuarioActual)
 				.observaciones(request.getObservaciones())
@@ -72,14 +91,31 @@ public class InstalacionService {
 				.build();
 
 		for (InstalacionItemRequestDto itemRequest : request.getItems()) {
-			InstalacionItemModel item = InstalacionItemModel.builder()
-					.material(itemRequest.getMaterial())
-					.fotoUrl(itemRequest.getFotoUrl())
-					.build();
-			instalacion.addItem(item);
+			instalacion.addItem(construirItem(itemRequest));
 		}
 
 		return instalacionMapper.toDto(instalacionEjecucionRepository.save(instalacion));
+	}
+
+	private InstalacionItemModel construirItem(InstalacionItemRequestDto itemRequest) {
+		MaterialModel material = materialRepository.findById(itemRequest.getMaterialId())
+				.orElseThrow(() -> new ResourceNotFoundException("Material no encontrado con id " + itemRequest.getMaterialId()));
+
+		int cantidadFotos = itemRequest.getFotos() == null ? 0 : itemRequest.getFotos().size();
+		if (cantidadFotos < material.getMinimoFotos()) {
+			throw new BusinessException(
+					"El material '" + material.getNombre() + "' requiere al menos " + material.getMinimoFotos() + " foto(s)");
+		}
+
+		InstalacionItemModel item = InstalacionItemModel.builder()
+				.material(material)
+				.build();
+
+		if (itemRequest.getFotos() != null) {
+			itemRequest.getFotos().forEach(url -> item.addFoto(InstalacionItemFotoModel.builder().url(url).build()));
+		}
+
+		return item;
 	}
 
 	private InstalacionEjecucionModel buscarPorId(Long id) {

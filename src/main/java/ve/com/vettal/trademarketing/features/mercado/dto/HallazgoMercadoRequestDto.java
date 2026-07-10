@@ -12,20 +12,17 @@ import ve.com.vettal.trademarketing.features.mercado.model.TipoHallazgo;
 @AllArgsConstructor
 public class HallazgoMercadoRequestDto {
 
+	@NotNull(message = "La visita es obligatoria")
+	private Long visitaId;
+
 	@NotNull(message = "El tipo de hallazgo es obligatorio")
 	private TipoHallazgo tipo;
 
-	private String erpClienteId;
-
-	private String clienteNombre;
-
-	private String categoriaProducto;
-
-	private String marca;
+	private Long categoriaProductoId;
 
 	private String marcaCompetencia;
 
-	private String oportunidadTexto;
+	private String observacionTexto;
 
 	private String detalle;
 

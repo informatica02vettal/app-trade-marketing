@@ -16,9 +16,11 @@ import ve.com.vettal.trademarketing.features.instalaciones.model.EstadoInstalaci
 public class InstalacionResponseDto {
 
 	private Long id;
+	private Long visitaId;
 	private String erpClienteId;
 	private String clienteNombre;
-	private String marca;
+	private Long marcaId;
+	private String marcaNombre;
 	private CategoriaInstalacion categoria;
 	private Long usuarioId;
 	private String usuarioNombre;

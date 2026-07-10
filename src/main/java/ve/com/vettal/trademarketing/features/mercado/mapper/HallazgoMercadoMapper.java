@@ -13,6 +13,9 @@ import ve.com.vettal.trademarketing.features.mercado.model.HallazgoProductoModel
 @Mapper(componentModel = "spring")
 public interface HallazgoMercadoMapper {
 
+	@Mapping(target = "visitaId", source = "visita.id")
+	@Mapping(target = "categoriaProductoId", source = "categoriaProducto.id")
+	@Mapping(target = "categoriaProductoNombre", source = "categoriaProducto.nombre")
 	@Mapping(target = "usuarioId", source = "usuario.id")
 	@Mapping(target = "usuarioNombre", source = "usuario.nombre")
 	HallazgoMercadoResponseDto toDto(HallazgoMercadoModel model);

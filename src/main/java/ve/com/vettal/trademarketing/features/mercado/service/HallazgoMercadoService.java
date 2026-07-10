@@ -5,7 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ve.com.vettal.trademarketing.common.exception.BusinessException;
+import ve.com.vettal.trademarketing.common.exception.ResourceNotFoundException;
 import ve.com.vettal.trademarketing.common.security.AuthenticatedUserProvider;
+import ve.com.vettal.trademarketing.features.catalogos.model.CategoriaProductoMercadoModel;
+import ve.com.vettal.trademarketing.features.catalogos.repository.CategoriaProductoMercadoRepository;
 import ve.com.vettal.trademarketing.features.mercado.constants.MercadoConstants;
 import ve.com.vettal.trademarketing.features.mercado.dto.HallazgoMercadoRequestDto;
 import ve.com.vettal.trademarketing.features.mercado.dto.HallazgoMercadoResponseDto;
@@ -15,12 +18,17 @@ import ve.com.vettal.trademarketing.features.mercado.model.HallazgoMercadoModel;
 import ve.com.vettal.trademarketing.features.mercado.model.HallazgoProductoModel;
 import ve.com.vettal.trademarketing.features.mercado.model.TipoHallazgo;
 import ve.com.vettal.trademarketing.features.mercado.repository.HallazgoMercadoRepository;
+import ve.com.vettal.trademarketing.features.visitas.model.EstadoVisita;
+import ve.com.vettal.trademarketing.features.visitas.model.VisitaModel;
+import ve.com.vettal.trademarketing.features.visitas.repository.VisitaRepository;
 
 @Service
 @RequiredArgsConstructor
 public class HallazgoMercadoService {
 
 	private final HallazgoMercadoRepository hallazgoMercadoRepository;
+	private final VisitaRepository visitaRepository;
+	private final CategoriaProductoMercadoRepository categoriaProductoMercadoRepository;
 	private final HallazgoMercadoMapper hallazgoMercadoMapper;
 	private final AuthenticatedUserProvider authenticatedUserProvider;
 
@@ -43,23 +51,30 @@ public class HallazgoMercadoService {
 
 	@Transactional
 	public HallazgoMercadoResponseDto crear(HallazgoMercadoRequestDto request) {
-		if (request.getTipo() == TipoHallazgo.CLIENTE_NO_REGISTRADO) {
-			throw new BusinessException(MercadoConstants.MSG_TIPO_NO_PERMITIDO_EN_ENDPOINT_GENERICO);
+		VisitaModel visita = visitaRepository.findById(request.getVisitaId())
+				.orElseThrow(() -> new ResourceNotFoundException("Visita no encontrada con id " + request.getVisitaId()));
+		if (visita.getEstado() != EstadoVisita.EN_CURSO) {
+			throw new BusinessException("Solo se pueden registrar hallazgos de mercado en visitas en curso");
 		}
 
-		if (request.getTipo() == TipoHallazgo.OPORTUNIDAD_MERCADO
-				&& (request.getOportunidadTexto() == null || request.getOportunidadTexto().isBlank())) {
-			throw new BusinessException(MercadoConstants.MSG_OPORTUNIDAD_TEXTO_OBLIGATORIO);
+		if (request.getTipo() == TipoHallazgo.OBSERVACION_MERCADO
+				&& (request.getObservacionTexto() == null || request.getObservacionTexto().isBlank())) {
+			throw new BusinessException(MercadoConstants.MSG_OBSERVACION_TEXTO_OBLIGATORIO);
+		}
+
+		CategoriaProductoMercadoModel categoriaProducto = null;
+		if (request.getCategoriaProductoId() != null) {
+			categoriaProducto = categoriaProductoMercadoRepository.findById(request.getCategoriaProductoId())
+					.orElseThrow(() -> new ResourceNotFoundException(
+							"Categoría de producto no encontrada con id " + request.getCategoriaProductoId()));
 		}
 
 		HallazgoMercadoModel hallazgo = HallazgoMercadoModel.builder()
+				.visita(visita)
 				.tipo(request.getTipo())
-				.erpClienteId(request.getErpClienteId())
-				.clienteNombre(request.getClienteNombre())
-				.categoriaProducto(request.getCategoriaProducto())
-				.marca(request.getMarca())
+				.categoriaProducto(categoriaProducto)
 				.marcaCompetencia(request.getMarcaCompetencia())
-				.oportunidadTexto(request.getOportunidadTexto())
+				.observacionTexto(request.getObservacionTexto())
 				.detalle(request.getDetalle())
 				.usuario(authenticatedUserProvider.getUsuarioActual())
 				.build();

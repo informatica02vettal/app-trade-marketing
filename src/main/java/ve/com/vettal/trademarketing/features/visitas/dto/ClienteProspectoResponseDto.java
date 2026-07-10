@@ -1,6 +1,5 @@
-package ve.com.vettal.trademarketing.features.mercado.dto;
+package ve.com.vettal.trademarketing.features.visitas.dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,13 +13,11 @@ import lombok.NoArgsConstructor;
 public class ClienteProspectoResponseDto {
 
 	private Long id;
-	private Long hallazgoId;
+	private Long visitaId;
 	private String nombre;
 	private String rif;
 	private String whatsapp;
 	private String telefono;
-	private BigDecimal gpsLat;
-	private BigDecimal gpsLng;
 	private String fotoFachadaUrl;
 	private String fotoInteriorUrl;
 	private String marcasCompetencia;

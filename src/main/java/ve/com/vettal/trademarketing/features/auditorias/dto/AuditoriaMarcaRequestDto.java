@@ -2,7 +2,6 @@ package ve.com.vettal.trademarketing.features.auditorias.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,8 +17,8 @@ public class AuditoriaMarcaRequestDto {
 	@NotNull(message = "El id de la visita es obligatorio")
 	private Long visitaId;
 
-	@NotBlank(message = "La marca es obligatoria")
-	private String marca;
+	@NotNull(message = "La marca es obligatoria")
+	private Long marcaId;
 
 	@NotNull(message = "El porcentaje de presencia es obligatorio")
 	@Min(value = 0, message = "El porcentaje de presencia no puede ser negativo")
