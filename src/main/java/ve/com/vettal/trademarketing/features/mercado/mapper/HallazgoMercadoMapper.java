@@ -14,6 +14,8 @@ import ve.com.vettal.trademarketing.features.mercado.model.HallazgoProductoModel
 public interface HallazgoMercadoMapper {
 
 	@Mapping(target = "visitaId", source = "visita.id")
+	@Mapping(target = "marcaId", source = "marca.id")
+	@Mapping(target = "marcaNombre", source = "marca.nombre")
 	@Mapping(target = "categoriaProductoId", source = "categoriaProducto.id")
 	@Mapping(target = "categoriaProductoNombre", source = "categoriaProducto.nombre")
 	@Mapping(target = "usuarioId", source = "usuario.id")

@@ -37,3 +37,6 @@ build/
 .env
 logs/
 /logs/
+
+### Evidencia fotográfica subida vía POST /api/v1/archivos ###
+/uploads/

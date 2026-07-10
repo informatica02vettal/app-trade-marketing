@@ -18,6 +18,8 @@ public class HallazgoMercadoRequestDto {
 	@NotNull(message = "El tipo de hallazgo es obligatorio")
 	private TipoHallazgo tipo;
 
+	private Long marcaId;
+
 	private Long categoriaProductoId;
 
 	private String marcaCompetencia;

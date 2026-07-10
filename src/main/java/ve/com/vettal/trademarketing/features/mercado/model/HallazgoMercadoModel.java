@@ -22,6 +22,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ve.com.vettal.trademarketing.features.catalogos.model.CategoriaProductoMercadoModel;
+import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
 import ve.com.vettal.trademarketing.features.usuarios.model.UsuarioModel;
 import ve.com.vettal.trademarketing.features.visitas.model.VisitaModel;
 
@@ -41,6 +42,10 @@ public class HallazgoMercadoModel {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "visita_id", nullable = false)
 	private VisitaModel visita;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "marca_id", nullable = true)
+	private MarcaModel marca;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "tipo", nullable = false, length = 40)

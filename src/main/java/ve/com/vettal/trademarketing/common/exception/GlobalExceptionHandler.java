@@ -13,6 +13,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.ResponseStatusException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -58,6 +59,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(AuthenticationException.class)
 	public ResponseEntity<ApiResponseDto<Void>> handleAuthentication(AuthenticationException ex, HttpServletRequest request) {
 		return build(HttpStatus.UNAUTHORIZED, "Credenciales inválidas o token expirado", request, null);
+	}
+
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public ResponseEntity<ApiResponseDto<Void>> handleMaxUploadSize(MaxUploadSizeExceededException ex, HttpServletRequest request) {
+		return build(HttpStatus.BAD_REQUEST, "El archivo excede el tamaño máximo permitido (10MB)", request, null);
 	}
 
 	@ExceptionHandler(DataIntegrityViolationException.class)

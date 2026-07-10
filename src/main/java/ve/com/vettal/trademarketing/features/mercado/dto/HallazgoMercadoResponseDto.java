@@ -17,6 +17,8 @@ public class HallazgoMercadoResponseDto {
 	private Long id;
 	private Long visitaId;
 	private TipoHallazgo tipo;
+	private Long marcaId;
+	private String marcaNombre;
 	private Long categoriaProductoId;
 	private String categoriaProductoNombre;
 	private String marcaCompetencia;

@@ -52,6 +52,8 @@ app:
     email: ${ADMIN_EMAIL:admin@vettal.com.ve}
     password: ${ADMIN_PASSWORD:CAMBIA_ESTA_CLAVE_TEMPORAL}
     nombre: ${ADMIN_NOMBRE:Administrador}
+  storage:
+    base-path: ${STORAGE_BASE_PATH:./uploads}
 
 jwt:
   secret: ${JWT_SECRET}

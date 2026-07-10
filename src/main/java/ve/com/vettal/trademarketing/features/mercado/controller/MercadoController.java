@@ -37,8 +37,9 @@ public class MercadoController {
 	@GetMapping
 	public ResponseEntity<ApiResponseDto<List<HallazgoMercadoResponseDto>>> listar(
 			@RequestParam(required = false) TipoHallazgo tipo,
-			@RequestParam(required = false) Long usuarioId) {
-		List<HallazgoMercadoResponseDto> hallazgos = hallazgoMercadoService.listar(tipo, usuarioId);
+			@RequestParam(required = false) Long usuarioId,
+			@RequestParam(required = false) Long marcaId) {
+		List<HallazgoMercadoResponseDto> hallazgos = hallazgoMercadoService.listar(tipo, usuarioId, marcaId);
 		return ResponseEntity.ok(ApiResponseDto.ok(hallazgos, "Hallazgos de mercado obtenidos"));
 	}
 

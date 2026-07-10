@@ -8,7 +8,9 @@ import ve.com.vettal.trademarketing.common.exception.BusinessException;
 import ve.com.vettal.trademarketing.common.exception.ResourceNotFoundException;
 import ve.com.vettal.trademarketing.common.security.AuthenticatedUserProvider;
 import ve.com.vettal.trademarketing.features.catalogos.model.CategoriaProductoMercadoModel;
+import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
 import ve.com.vettal.trademarketing.features.catalogos.repository.CategoriaProductoMercadoRepository;
+import ve.com.vettal.trademarketing.features.catalogos.repository.MarcaRepository;
 import ve.com.vettal.trademarketing.features.mercado.constants.MercadoConstants;
 import ve.com.vettal.trademarketing.features.mercado.dto.HallazgoMercadoRequestDto;
 import ve.com.vettal.trademarketing.features.mercado.dto.HallazgoMercadoResponseDto;
@@ -28,25 +30,14 @@ public class HallazgoMercadoService {
 
 	private final HallazgoMercadoRepository hallazgoMercadoRepository;
 	private final VisitaRepository visitaRepository;
+	private final MarcaRepository marcaRepository;
 	private final CategoriaProductoMercadoRepository categoriaProductoMercadoRepository;
 	private final HallazgoMercadoMapper hallazgoMercadoMapper;
 	private final AuthenticatedUserProvider authenticatedUserProvider;
 
 	@Transactional(readOnly = true)
-	public List<HallazgoMercadoResponseDto> listar(TipoHallazgo tipo, Long usuarioId) {
-		List<HallazgoMercadoModel> hallazgos;
-
-		if (tipo != null && usuarioId != null) {
-			hallazgos = hallazgoMercadoRepository.findByTipoAndUsuarioId(tipo, usuarioId);
-		} else if (tipo != null) {
-			hallazgos = hallazgoMercadoRepository.findByTipo(tipo);
-		} else if (usuarioId != null) {
-			hallazgos = hallazgoMercadoRepository.findByUsuarioId(usuarioId);
-		} else {
-			hallazgos = hallazgoMercadoRepository.findAll();
-		}
-
-		return hallazgoMercadoMapper.toDtoList(hallazgos);
+	public List<HallazgoMercadoResponseDto> listar(TipoHallazgo tipo, Long usuarioId, Long marcaId) {
+		return hallazgoMercadoMapper.toDtoList(hallazgoMercadoRepository.buscar(tipo, usuarioId, marcaId));
 	}
 
 	@Transactional
@@ -62,6 +53,12 @@ public class HallazgoMercadoService {
 			throw new BusinessException(MercadoConstants.MSG_OBSERVACION_TEXTO_OBLIGATORIO);
 		}
 
+		MarcaModel marca = null;
+		if (request.getMarcaId() != null) {
+			marca = marcaRepository.findById(request.getMarcaId())
+					.orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada con id " + request.getMarcaId()));
+		}
+
 		CategoriaProductoMercadoModel categoriaProducto = null;
 		if (request.getCategoriaProductoId() != null) {
 			categoriaProducto = categoriaProductoMercadoRepository.findById(request.getCategoriaProductoId())
@@ -71,6 +68,7 @@ public class HallazgoMercadoService {
 
 		HallazgoMercadoModel hallazgo = HallazgoMercadoModel.builder()
 				.visita(visita)
+				.marca(marca)
 				.tipo(request.getTipo())
 				.categoriaProducto(categoriaProducto)
 				.marcaCompetencia(request.getMarcaCompetencia())
