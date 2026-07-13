@@ -16,6 +16,8 @@ public class PlanVisitaResponseDto {
 
 	private Long id;
 	private String erpClienteId;
+	private Long sucursalId;
+	private String sucursalNombre;
 	private String clienteNombre;
 	private Long usuarioId;
 	private String usuarioNombre;
@@ -23,6 +25,10 @@ public class PlanVisitaResponseDto {
 	private LocalDate fechaProgramada;
 	private String horaProgramada;
 	private String objetivo;
+	private Long objetivoTipoId;
+	private String objetivoTipoNombre;
+	private Long objetivoSubtipoId;
+	private String objetivoSubtipoNombre;
 	private TipoVisita tipoVisita;
 	private EstadoPlanVisita estado;
 }

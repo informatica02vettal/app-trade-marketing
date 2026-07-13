@@ -7,6 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ve.com.vettal.trademarketing.common.exception.ResourceNotFoundException;
 import ve.com.vettal.trademarketing.common.security.AuthenticatedUserProvider;
+import ve.com.vettal.trademarketing.features.clientes.model.SucursalClienteErpModel;
+import ve.com.vettal.trademarketing.features.clientes.repository.SucursalClienteErpRepository;
+import ve.com.vettal.trademarketing.features.objetivosvisita.model.ObjetivoVisitaSubtipoModel;
+import ve.com.vettal.trademarketing.features.objetivosvisita.model.ObjetivoVisitaTipoModel;
+import ve.com.vettal.trademarketing.features.objetivosvisita.repository.ObjetivoVisitaSubtipoRepository;
+import ve.com.vettal.trademarketing.features.objetivosvisita.repository.ObjetivoVisitaTipoRepository;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaEstadoRequestDto;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaRequestDto;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaResponseDto;
@@ -23,6 +29,9 @@ public class PlanVisitaService {
 
 	private final PlanVisitaRepository planVisitaRepository;
 	private final UsuarioRepository usuarioRepository;
+	private final SucursalClienteErpRepository sucursalClienteErpRepository;
+	private final ObjetivoVisitaTipoRepository objetivoVisitaTipoRepository;
+	private final ObjetivoVisitaSubtipoRepository objetivoVisitaSubtipoRepository;
 	private final PlanVisitaMapper planVisitaMapper;
 	private final AuthenticatedUserProvider authenticatedUserProvider;
 
@@ -52,14 +61,41 @@ public class PlanVisitaService {
 			usuario = authenticatedUserProvider.getUsuarioActual();
 		}
 
+		SucursalClienteErpModel sucursal = null;
+		if (request.getSucursalId() != null) {
+			sucursal = sucursalClienteErpRepository.findById(request.getSucursalId())
+					.orElseThrow(() -> new ResourceNotFoundException("Sucursal no encontrada con id " + request.getSucursalId()));
+		}
+
+		ObjetivoVisitaTipoModel objetivoTipo = null;
+		if (request.getObjetivoTipoId() != null) {
+			objetivoTipo = objetivoVisitaTipoRepository.findById(request.getObjetivoTipoId())
+					.orElseThrow(() -> new ResourceNotFoundException(
+							"Tipo de objetivo no encontrado con id " + request.getObjetivoTipoId()));
+		}
+
+		ObjetivoVisitaSubtipoModel objetivoSubtipo = null;
+		if (request.getObjetivoSubtipoId() != null) {
+			objetivoSubtipo = objetivoVisitaSubtipoRepository.findById(request.getObjetivoSubtipoId())
+					.orElseThrow(() -> new ResourceNotFoundException(
+							"Subtipo de objetivo no encontrado con id " + request.getObjetivoSubtipoId()));
+		}
+
+		String objetivo = objetivoTipo != null
+				? objetivoTipo.getNombre() + (objetivoSubtipo != null ? " · " + objetivoSubtipo.getNombre() : "")
+				: null;
+
 		PlanVisitaModel planVisita = PlanVisitaModel.builder()
 				.erpClienteId(request.getErpClienteId())
+				.sucursal(sucursal)
 				.clienteNombre(request.getClienteNombre())
 				.usuario(usuario)
 				.region(request.getRegion())
 				.fechaProgramada(request.getFechaProgramada())
 				.horaProgramada(request.getHoraProgramada())
-				.objetivo(request.getObjetivo())
+				.objetivo(objetivo)
+				.objetivoTipo(objetivoTipo)
+				.objetivoSubtipo(objetivoSubtipo)
 				.tipoVisita(request.getTipoVisita() != null ? request.getTipoVisita() : TipoVisita.PLANIFICADA)
 				.build();
 

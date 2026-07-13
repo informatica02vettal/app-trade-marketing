@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SucursalLocalResponseDto {
 
+	private Long id;
 	private Integer erpId;
 	private String codigoCliente;
 	private String idVendedor;

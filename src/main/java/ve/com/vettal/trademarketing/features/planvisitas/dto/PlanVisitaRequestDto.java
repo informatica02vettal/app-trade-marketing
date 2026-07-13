@@ -15,6 +15,8 @@ public class PlanVisitaRequestDto {
 
 	private String erpClienteId;
 
+	private Long sucursalId;
+
 	@NotBlank(message = "El nombre del cliente es obligatorio")
 	private String clienteNombre;
 
@@ -27,7 +29,9 @@ public class PlanVisitaRequestDto {
 
 	private String horaProgramada;
 
-	private String objetivo;
+	private Long objetivoTipoId;
+
+	private Long objetivoSubtipoId;
 
 	private TipoVisita tipoVisita;
 }

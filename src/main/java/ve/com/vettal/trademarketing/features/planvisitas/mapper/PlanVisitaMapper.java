@@ -11,6 +11,12 @@ public interface PlanVisitaMapper {
 
 	@Mapping(target = "usuarioId", source = "usuario.id")
 	@Mapping(target = "usuarioNombre", source = "usuario.nombre")
+	@Mapping(target = "sucursalId", source = "sucursal.id")
+	@Mapping(target = "sucursalNombre", source = "sucursal.nombreSucursal")
+	@Mapping(target = "objetivoTipoId", source = "objetivoTipo.id")
+	@Mapping(target = "objetivoTipoNombre", source = "objetivoTipo.nombre")
+	@Mapping(target = "objetivoSubtipoId", source = "objetivoSubtipo.id")
+	@Mapping(target = "objetivoSubtipoNombre", source = "objetivoSubtipo.nombre")
 	PlanVisitaResponseDto toDto(PlanVisitaModel model);
 
 	List<PlanVisitaResponseDto> toDtoList(List<PlanVisitaModel> models);

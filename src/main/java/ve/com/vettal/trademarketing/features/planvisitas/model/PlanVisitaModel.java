@@ -19,6 +19,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ve.com.vettal.trademarketing.features.clientes.model.SucursalClienteErpModel;
+import ve.com.vettal.trademarketing.features.objetivosvisita.model.ObjetivoVisitaSubtipoModel;
+import ve.com.vettal.trademarketing.features.objetivosvisita.model.ObjetivoVisitaTipoModel;
 import ve.com.vettal.trademarketing.features.usuarios.model.UsuarioModel;
 
 @Entity
@@ -36,6 +39,10 @@ public class PlanVisitaModel {
 
 	@Column(name = "erp_cliente_id", length = 10)
 	private String erpClienteId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "sucursal_id")
+	private SucursalClienteErpModel sucursal;
 
 	@Column(name = "cliente_nombre", nullable = false, length = 200)
 	private String clienteNombre;
@@ -55,6 +62,14 @@ public class PlanVisitaModel {
 
 	@Column(name = "objetivo", length = 255)
 	private String objetivo;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "objetivo_tipo_id")
+	private ObjetivoVisitaTipoModel objetivoTipo;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "objetivo_subtipo_id")
+	private ObjetivoVisitaSubtipoModel objetivoSubtipo;
 
 	@Enumerated(EnumType.STRING)
 	@Builder.Default
