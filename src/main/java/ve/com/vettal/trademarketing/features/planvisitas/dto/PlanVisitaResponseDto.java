@@ -29,6 +29,7 @@ public class PlanVisitaResponseDto {
 	private String objetivoTipoNombre;
 	private Long objetivoSubtipoId;
 	private String objetivoSubtipoNombre;
+	private String comentario;
 	private TipoVisita tipoVisita;
 	private EstadoPlanVisita estado;
 }

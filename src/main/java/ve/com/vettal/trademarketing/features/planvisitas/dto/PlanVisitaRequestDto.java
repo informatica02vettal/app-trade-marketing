@@ -33,5 +33,7 @@ public class PlanVisitaRequestDto {
 
 	private Long objetivoSubtipoId;
 
+	private String comentario;
+
 	private TipoVisita tipoVisita;
 }

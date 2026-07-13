@@ -17,6 +17,7 @@ import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaEstadoReq
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaRequestDto;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaResponseDto;
 import ve.com.vettal.trademarketing.features.planvisitas.mapper.PlanVisitaMapper;
+import ve.com.vettal.trademarketing.features.planvisitas.model.EstadoPlanVisita;
 import ve.com.vettal.trademarketing.features.planvisitas.model.PlanVisitaModel;
 import ve.com.vettal.trademarketing.features.planvisitas.model.TipoVisita;
 import ve.com.vettal.trademarketing.features.planvisitas.repository.PlanVisitaRepository;
@@ -36,19 +37,14 @@ public class PlanVisitaService {
 	private final AuthenticatedUserProvider authenticatedUserProvider;
 
 	@Transactional(readOnly = true)
-	public List<PlanVisitaResponseDto> listar(Long usuarioId, LocalDate fecha) {
+	public List<PlanVisitaResponseDto> listar(Long usuarioId, LocalDate fechaDesde, LocalDate fechaHasta, EstadoPlanVisita estado) {
 		Long usuarioIdEfectivo = usuarioId;
 		if (!authenticatedUserProvider.esAdminOSupervisor() && usuarioIdEfectivo == null) {
 			usuarioIdEfectivo = authenticatedUserProvider.getUsuarioActual().getId();
 		}
-		LocalDate fechaEfectiva = fecha != null ? fecha : LocalDate.now();
-
-		if (usuarioIdEfectivo == null) {
-			return List.of();
-		}
 
 		return planVisitaMapper.toDtoList(
-				planVisitaRepository.findByUsuarioIdAndFechaProgramada(usuarioIdEfectivo, fechaEfectiva));
+				planVisitaRepository.buscar(usuarioIdEfectivo, fechaDesde, fechaHasta, estado));
 	}
 
 	@Transactional
@@ -96,6 +92,7 @@ public class PlanVisitaService {
 				.objetivo(objetivo)
 				.objetivoTipo(objetivoTipo)
 				.objetivoSubtipo(objetivoSubtipo)
+				.comentario(request.getComentario())
 				.tipoVisita(request.getTipoVisita() != null ? request.getTipoVisita() : TipoVisita.PLANIFICADA)
 				.build();
 

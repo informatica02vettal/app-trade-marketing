@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -70,6 +71,10 @@ public class PlanVisitaModel {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "objetivo_subtipo_id")
 	private ObjetivoVisitaSubtipoModel objetivoSubtipo;
+
+	@Lob
+	@Column(name = "comentario", columnDefinition = "TEXT")
+	private String comentario;
 
 	@Enumerated(EnumType.STRING)
 	@Builder.Default

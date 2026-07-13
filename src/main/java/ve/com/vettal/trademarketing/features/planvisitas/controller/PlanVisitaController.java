@@ -20,6 +20,7 @@ import ve.com.vettal.trademarketing.common.dto.ApiResponseDto;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaEstadoRequestDto;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaRequestDto;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaResponseDto;
+import ve.com.vettal.trademarketing.features.planvisitas.model.EstadoPlanVisita;
 import ve.com.vettal.trademarketing.features.planvisitas.service.PlanVisitaService;
 
 @RestController
@@ -34,8 +35,10 @@ public class PlanVisitaController {
 	@GetMapping
 	public ResponseEntity<ApiResponseDto<List<PlanVisitaResponseDto>>> listar(
 			@RequestParam(required = false) Long usuarioId,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
-		List<PlanVisitaResponseDto> planes = planVisitaService.listar(usuarioId, fecha);
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
+			@RequestParam(required = false) EstadoPlanVisita estado) {
+		List<PlanVisitaResponseDto> planes = planVisitaService.listar(usuarioId, fechaDesde, fechaHasta, estado);
 		return ResponseEntity.ok(ApiResponseDto.ok(planes, "Plan de visitas obtenido"));
 	}
 
