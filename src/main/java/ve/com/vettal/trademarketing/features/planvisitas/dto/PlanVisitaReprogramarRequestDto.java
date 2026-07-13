@@ -6,35 +6,15 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ve.com.vettal.trademarketing.features.planvisitas.model.TipoVisita;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PlanVisitaRequestDto {
-
-	private String erpClienteId;
-
-	private Long sucursalId;
-
-	@NotBlank(message = "El nombre del cliente es obligatorio")
-	private String clienteNombre;
-
-	private Long usuarioId;
-
-	private String region;
+public class PlanVisitaReprogramarRequestDto {
 
 	@NotNull(message = "La fecha programada es obligatoria")
 	private LocalDate fechaProgramada;
 
 	@NotBlank(message = "La hora programada es obligatoria")
 	private String horaProgramada;
-
-	private Long objetivoTipoId;
-
-	private Long objetivoSubtipoId;
-
-	private String comentario;
-
-	private TipoVisita tipoVisita;
 }

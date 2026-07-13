@@ -14,6 +14,7 @@ import ve.com.vettal.trademarketing.features.objetivosvisita.model.ObjetivoVisit
 import ve.com.vettal.trademarketing.features.objetivosvisita.repository.ObjetivoVisitaSubtipoRepository;
 import ve.com.vettal.trademarketing.features.objetivosvisita.repository.ObjetivoVisitaTipoRepository;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaEstadoRequestDto;
+import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaReprogramarRequestDto;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaRequestDto;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaResponseDto;
 import ve.com.vettal.trademarketing.features.planvisitas.mapper.PlanVisitaMapper;
@@ -105,6 +106,18 @@ public class PlanVisitaService {
 				.orElseThrow(() -> new ResourceNotFoundException("Plan de visita no encontrado con id " + id));
 
 		planVisita.setEstado(request.getEstado());
+
+		return planVisitaMapper.toDto(planVisitaRepository.save(planVisita));
+	}
+
+	@Transactional
+	public PlanVisitaResponseDto reprogramar(Long id, PlanVisitaReprogramarRequestDto request) {
+		PlanVisitaModel planVisita = planVisitaRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Plan de visita no encontrado con id " + id));
+
+		planVisita.setFechaProgramada(request.getFechaProgramada());
+		planVisita.setHoraProgramada(request.getHoraProgramada());
+		planVisita.setEstado(EstadoPlanVisita.REPROGRAMADA);
 
 		return planVisitaMapper.toDto(planVisitaRepository.save(planVisita));
 	}

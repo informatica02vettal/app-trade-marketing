@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ve.com.vettal.trademarketing.common.dto.ApiResponseDto;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaEstadoRequestDto;
+import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaReprogramarRequestDto;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaRequestDto;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaResponseDto;
 import ve.com.vettal.trademarketing.features.planvisitas.model.EstadoPlanVisita;
@@ -55,5 +56,13 @@ public class PlanVisitaController {
 			@Valid @RequestBody PlanVisitaEstadoRequestDto request) {
 		PlanVisitaResponseDto planVisita = planVisitaService.actualizarEstado(id, request);
 		return ResponseEntity.ok(ApiResponseDto.ok(planVisita, "Estado del plan de visita actualizado"));
+	}
+
+	@PatchMapping("/{id}/reprogramar")
+	public ResponseEntity<ApiResponseDto<PlanVisitaResponseDto>> reprogramar(
+			@PathVariable Long id,
+			@Valid @RequestBody PlanVisitaReprogramarRequestDto request) {
+		PlanVisitaResponseDto planVisita = planVisitaService.reprogramar(id, request);
+		return ResponseEntity.ok(ApiResponseDto.ok(planVisita, "Visita reprogramada"));
 	}
 }
