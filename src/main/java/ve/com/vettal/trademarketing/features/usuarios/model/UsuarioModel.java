@@ -41,9 +41,6 @@ public class UsuarioModel {
 	@Column(name = "region", length = 100)
 	private String region;
 
-	@Column(name = "ejecutivo_asociado", length = 150)
-	private String ejecutivoAsociado;
-
 	@Enumerated(EnumType.STRING)
 	@Column(name = "rol", nullable = false, length = 20)
 	private RolUsuario rol;

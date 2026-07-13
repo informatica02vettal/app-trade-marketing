@@ -11,7 +11,6 @@ CREATE TABLE usuarios (
     email               VARCHAR(150)    NOT NULL,
     password_hash       VARCHAR(255)    NOT NULL,
     region              VARCHAR(100)    NULL,
-    ejecutivo_asociado  VARCHAR(150)    NULL,
     rol                 VARCHAR(20)     NOT NULL,
     activo              TINYINT(1)      NOT NULL DEFAULT 1,
     created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,

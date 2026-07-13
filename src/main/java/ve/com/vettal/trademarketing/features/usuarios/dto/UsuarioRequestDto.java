@@ -26,8 +26,6 @@ public class UsuarioRequestDto {
 
 	private String region;
 
-	private String ejecutivoAsociado;
-
 	@NotNull(message = "El rol es obligatorio")
 	private RolUsuario rol;
 

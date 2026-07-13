@@ -1,10 +1,14 @@
 package ve.com.vettal.trademarketing.features.planvisitas.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ve.com.vettal.trademarketing.common.exception.BusinessException;
 import ve.com.vettal.trademarketing.common.exception.ResourceNotFoundException;
 import ve.com.vettal.trademarketing.common.security.AuthenticatedUserProvider;
 import ve.com.vettal.trademarketing.features.clientes.model.SucursalClienteErpModel;
@@ -48,8 +52,22 @@ public class PlanVisitaService {
 				planVisitaRepository.buscar(usuarioIdEfectivo, fechaDesde, fechaHasta, estado));
 	}
 
+	private void validarFechaHoraNoPasada(LocalDate fecha, String hora) {
+		LocalDateTime fechaHora;
+		try {
+			fechaHora = LocalDateTime.of(fecha, LocalTime.parse(hora));
+		} catch (DateTimeParseException ex) {
+			throw new BusinessException("La hora programada no es válida");
+		}
+		if (fechaHora.isBefore(LocalDateTime.now())) {
+			throw new BusinessException("No se puede programar o reprogramar una visita para una fecha/hora anterior a la actual");
+		}
+	}
+
 	@Transactional
 	public PlanVisitaResponseDto crear(PlanVisitaRequestDto request) {
+		validarFechaHoraNoPasada(request.getFechaProgramada(), request.getHoraProgramada());
+
 		UsuarioModel usuario;
 		if (request.getUsuarioId() != null) {
 			usuario = usuarioRepository.findById(request.getUsuarioId())
@@ -112,6 +130,8 @@ public class PlanVisitaService {
 
 	@Transactional
 	public PlanVisitaResponseDto reprogramar(Long id, PlanVisitaReprogramarRequestDto request) {
+		validarFechaHoraNoPasada(request.getFechaProgramada(), request.getHoraProgramada());
+
 		PlanVisitaModel planVisita = planVisitaRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Plan de visita no encontrado con id " + id));
 
