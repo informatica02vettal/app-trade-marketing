@@ -82,6 +82,12 @@ public class EventoVisitaModel {
 	@Column(name = "cantidad_asistentes_estimada")
 	private Integer cantidadAsistentesEstimada;
 
+	@Column(name = "gps_lat")
+	private Double gpsLat;
+
+	@Column(name = "gps_lng")
+	private Double gpsLng;
+
 	@Builder.Default
 	@OneToMany(mappedBy = "evento", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EventoLeadModel> leads = new ArrayList<>();

@@ -53,6 +53,8 @@ public class EventoVisitaService {
 		evento.setObjetivoParticipacion(request.getObjetivoParticipacion());
 		evento.setParticipacionVettal(request.getParticipacionVettal());
 		evento.setCantidadAsistentesEstimada(request.getCantidadAsistentesEstimada());
+		evento.setGpsLat(request.getGpsLat());
+		evento.setGpsLng(request.getGpsLng());
 
 		evento.getLeads().clear();
 		if (request.getLeads() != null) {

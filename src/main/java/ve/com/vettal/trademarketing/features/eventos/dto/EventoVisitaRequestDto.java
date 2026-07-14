@@ -44,6 +44,10 @@ public class EventoVisitaRequestDto {
 
 	private Integer cantidadAsistentesEstimada;
 
+	private Double gpsLat;
+
+	private Double gpsLng;
+
 	private List<EventoLeadRequestDto> leads;
 
 	private List<String> videosEntrevistaUrls;

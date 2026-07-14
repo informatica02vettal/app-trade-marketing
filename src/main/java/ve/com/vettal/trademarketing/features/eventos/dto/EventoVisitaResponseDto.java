@@ -30,6 +30,8 @@ public class EventoVisitaResponseDto {
 	private String objetivoParticipacion;
 	private ParticipacionVettal participacionVettal;
 	private Integer cantidadAsistentesEstimada;
+	private Double gpsLat;
+	private Double gpsLng;
 	private List<EventoLeadResponseDto> leads;
 	private List<String> videosEntrevistaUrls;
 }
