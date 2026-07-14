@@ -9,13 +9,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +27,7 @@ import lombok.NoArgsConstructor;
 import ve.com.vettal.trademarketing.features.clientes.model.SucursalClienteErpModel;
 import ve.com.vettal.trademarketing.features.objetivosvisita.model.ObjetivoVisitaSubtipoModel;
 import ve.com.vettal.trademarketing.features.objetivosvisita.model.ObjetivoVisitaTipoModel;
+import ve.com.vettal.trademarketing.features.productos.model.ProductoErpModel;
 import ve.com.vettal.trademarketing.features.usuarios.model.UsuarioModel;
 
 @Entity
@@ -75,6 +80,14 @@ public class PlanVisitaModel {
 	@Lob
 	@Column(name = "comentario", columnDefinition = "TEXT")
 	private String comentario;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "plan_visita_productos",
+			joinColumns = @JoinColumn(name = "plan_visita_id"),
+			inverseJoinColumns = @JoinColumn(name = "producto_erp_id"))
+	@Builder.Default
+	private List<ProductoErpModel> productosAuditar = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
 	@Builder.Default

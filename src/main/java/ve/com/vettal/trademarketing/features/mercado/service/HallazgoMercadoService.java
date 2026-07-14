@@ -20,6 +20,8 @@ import ve.com.vettal.trademarketing.features.mercado.model.HallazgoMercadoModel;
 import ve.com.vettal.trademarketing.features.mercado.model.HallazgoProductoModel;
 import ve.com.vettal.trademarketing.features.mercado.model.TipoHallazgo;
 import ve.com.vettal.trademarketing.features.mercado.repository.HallazgoMercadoRepository;
+import ve.com.vettal.trademarketing.features.productos.model.ProductoErpModel;
+import ve.com.vettal.trademarketing.features.productos.repository.ProductoErpRepository;
 import ve.com.vettal.trademarketing.features.visitas.model.EstadoVisita;
 import ve.com.vettal.trademarketing.features.visitas.model.VisitaModel;
 import ve.com.vettal.trademarketing.features.visitas.repository.VisitaRepository;
@@ -32,6 +34,7 @@ public class HallazgoMercadoService {
 	private final VisitaRepository visitaRepository;
 	private final MarcaRepository marcaRepository;
 	private final CategoriaProductoMercadoRepository categoriaProductoMercadoRepository;
+	private final ProductoErpRepository productoErpRepository;
 	private final HallazgoMercadoMapper hallazgoMercadoMapper;
 	private final AuthenticatedUserProvider authenticatedUserProvider;
 
@@ -66,9 +69,17 @@ public class HallazgoMercadoService {
 							"Categoría de producto no encontrada con id " + request.getCategoriaProductoId()));
 		}
 
+		ProductoErpModel productoErp = null;
+		if (request.getProductoErpId() != null) {
+			productoErp = productoErpRepository.findById(request.getProductoErpId())
+					.orElseThrow(() -> new ResourceNotFoundException(
+							"Producto no encontrado con id " + request.getProductoErpId()));
+		}
+
 		HallazgoMercadoModel hallazgo = HallazgoMercadoModel.builder()
 				.visita(visita)
 				.marca(marca)
+				.productoErp(productoErp)
 				.tipo(request.getTipo())
 				.categoriaProducto(categoriaProducto)
 				.marcaCompetencia(request.getMarcaCompetencia())

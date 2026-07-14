@@ -3,6 +3,7 @@ package ve.com.vettal.trademarketing.features.planvisitas.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,4 +38,7 @@ public class PlanVisitaRequestDto {
 	private String comentario;
 
 	private TipoVisita tipoVisita;
+
+	/** Productos propios del ERP a auditar en esta visita (Auditoría de marca). */
+	private List<Long> productoErpIds;
 }

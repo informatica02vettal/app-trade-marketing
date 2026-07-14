@@ -23,6 +23,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ve.com.vettal.trademarketing.features.catalogos.model.CategoriaProductoMercadoModel;
 import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
+import ve.com.vettal.trademarketing.features.productos.model.ProductoErpModel;
 import ve.com.vettal.trademarketing.features.usuarios.model.UsuarioModel;
 import ve.com.vettal.trademarketing.features.visitas.model.VisitaModel;
 
@@ -46,6 +47,11 @@ public class HallazgoMercadoModel {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "marca_id", nullable = true)
 	private MarcaModel marca;
+
+	/** Producto propio (ERP) al que se refiere esta inteligencia de mercado, si aplica. */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "producto_erp_id", nullable = true)
+	private ProductoErpModel productoErp;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "tipo", nullable = false, length = 40)

@@ -20,6 +20,9 @@ public class HallazgoMercadoRequestDto {
 
 	private Long marcaId;
 
+	/** Producto propio (ERP) al que se refiere este hallazgo, si aplica. */
+	private Long productoErpId;
+
 	private Long categoriaProductoId;
 
 	private String marcaCompetencia;

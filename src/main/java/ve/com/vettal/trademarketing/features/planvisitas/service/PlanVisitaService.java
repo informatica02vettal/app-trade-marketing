@@ -1,6 +1,7 @@
 package ve.com.vettal.trademarketing.features.planvisitas.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ import ve.com.vettal.trademarketing.features.planvisitas.model.EstadoPlanVisita;
 import ve.com.vettal.trademarketing.features.planvisitas.model.PlanVisitaModel;
 import ve.com.vettal.trademarketing.features.planvisitas.model.TipoVisita;
 import ve.com.vettal.trademarketing.features.planvisitas.repository.PlanVisitaRepository;
+import ve.com.vettal.trademarketing.features.productos.model.ProductoErpModel;
+import ve.com.vettal.trademarketing.features.productos.repository.ProductoErpRepository;
 import ve.com.vettal.trademarketing.features.usuarios.model.UsuarioModel;
 import ve.com.vettal.trademarketing.features.usuarios.repository.UsuarioRepository;
 
@@ -34,6 +37,7 @@ public class PlanVisitaService {
 	private final SucursalClienteErpRepository sucursalClienteErpRepository;
 	private final ObjetivoVisitaTipoRepository objetivoVisitaTipoRepository;
 	private final ObjetivoVisitaSubtipoRepository objetivoVisitaSubtipoRepository;
+	private final ProductoErpRepository productoErpRepository;
 	private final PlanVisitaMapper planVisitaMapper;
 	private final AuthenticatedUserProvider authenticatedUserProvider;
 
@@ -82,6 +86,11 @@ public class PlanVisitaService {
 				? objetivoTipo.getNombre() + (objetivoSubtipo != null ? " · " + objetivoSubtipo.getNombre() : "")
 				: null;
 
+		List<ProductoErpModel> productosAuditar = new ArrayList<>();
+		if (request.getProductoErpIds() != null && !request.getProductoErpIds().isEmpty()) {
+			productosAuditar = productoErpRepository.findAllById(request.getProductoErpIds());
+		}
+
 		PlanVisitaModel planVisita = PlanVisitaModel.builder()
 				.erpClienteId(request.getErpClienteId())
 				.sucursal(sucursal)
@@ -95,6 +104,7 @@ public class PlanVisitaService {
 				.objetivoSubtipo(objetivoSubtipo)
 				.comentario(request.getComentario())
 				.tipoVisita(request.getTipoVisita() != null ? request.getTipoVisita() : TipoVisita.PLANIFICADA)
+				.productosAuditar(productosAuditar)
 				.build();
 
 		return planVisitaMapper.toDto(planVisitaRepository.save(planVisita));

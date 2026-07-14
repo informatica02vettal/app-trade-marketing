@@ -1,12 +1,14 @@
 package ve.com.vettal.trademarketing.features.planvisitas.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ve.com.vettal.trademarketing.features.planvisitas.model.EstadoPlanVisita;
 import ve.com.vettal.trademarketing.features.planvisitas.model.TipoVisita;
+import ve.com.vettal.trademarketing.features.productos.dto.ProductoResumenDto;
 
 @Data
 @Builder
@@ -32,4 +34,5 @@ public class PlanVisitaResponseDto {
 	private String comentario;
 	private TipoVisita tipoVisita;
 	private EstadoPlanVisita estado;
+	private List<ProductoResumenDto> productosAuditar;
 }
