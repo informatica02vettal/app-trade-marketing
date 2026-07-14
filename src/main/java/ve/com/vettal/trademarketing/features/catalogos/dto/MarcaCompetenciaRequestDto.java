@@ -1,18 +1,17 @@
 package ve.com.vettal.trademarketing.features.catalogos.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MarcaCompetenciaResponseDto {
+public class MarcaCompetenciaRequestDto {
 
-	private Long id;
-	private Long marcaId;
+	@NotBlank(message = "El nombre es obligatorio")
 	private String nombre;
-	private boolean activo;
+
+	private Boolean activo;
 }

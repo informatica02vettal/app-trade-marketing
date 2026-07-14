@@ -6,5 +6,5 @@ import ve.com.vettal.trademarketing.features.catalogos.model.MarcaCompetenciaMod
 
 public interface MarcaCompetenciaRepository extends JpaRepository<MarcaCompetenciaModel, Long> {
 
-	List<MarcaCompetenciaModel> findByMarcaIdAndActivoTrue(Long marcaId);
+	List<MarcaCompetenciaModel> findByMarcaId(Long marcaId);
 }

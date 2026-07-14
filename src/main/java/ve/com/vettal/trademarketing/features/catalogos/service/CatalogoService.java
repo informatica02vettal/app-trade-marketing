@@ -2,16 +2,22 @@ package ve.com.vettal.trademarketing.features.catalogos.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ve.com.vettal.trademarketing.common.exception.BusinessException;
+import ve.com.vettal.trademarketing.common.exception.ResourceNotFoundException;
 import ve.com.vettal.trademarketing.features.catalogos.dto.CategoriaMaterialResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.CategoriaProductoMercadoResponseDto;
+import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaRequestDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MaterialResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.mapper.CatalogoMapper;
 import ve.com.vettal.trademarketing.features.catalogos.model.CategoriaMaterialModel;
 import ve.com.vettal.trademarketing.features.catalogos.model.FamiliaMaterial;
+import ve.com.vettal.trademarketing.features.catalogos.model.MarcaCompetenciaModel;
+import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
 import ve.com.vettal.trademarketing.features.catalogos.repository.CategoriaMaterialRepository;
 import ve.com.vettal.trademarketing.features.catalogos.repository.CategoriaProductoMercadoRepository;
 import ve.com.vettal.trademarketing.features.catalogos.repository.MarcaCompetenciaRepository;
@@ -35,7 +41,42 @@ public class CatalogoService {
 	}
 
 	public List<MarcaCompetenciaResponseDto> listarCompetencia(Long marcaId) {
-		return catalogoMapper.toCompetenciaDtoList(marcaCompetenciaRepository.findByMarcaIdAndActivoTrue(marcaId));
+		return catalogoMapper.toCompetenciaDtoList(marcaCompetenciaRepository.findByMarcaId(marcaId));
+	}
+
+	@Transactional
+	public MarcaCompetenciaResponseDto crearCompetencia(Long marcaId, MarcaCompetenciaRequestDto request) {
+		MarcaModel marca = marcaRepository.findById(marcaId)
+				.orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada con id " + marcaId));
+
+		MarcaCompetenciaModel competencia = MarcaCompetenciaModel.builder()
+				.marca(marca)
+				.nombre(request.getNombre())
+				.activo(request.getActivo() == null || request.getActivo())
+				.build();
+
+		return guardarCompetencia(competencia);
+	}
+
+	@Transactional
+	public MarcaCompetenciaResponseDto actualizarCompetencia(Long id, MarcaCompetenciaRequestDto request) {
+		MarcaCompetenciaModel competencia = marcaCompetenciaRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Marca de competencia no encontrada con id " + id));
+
+		competencia.setNombre(request.getNombre());
+		if (request.getActivo() != null) {
+			competencia.setActivo(request.getActivo());
+		}
+
+		return guardarCompetencia(competencia);
+	}
+
+	private MarcaCompetenciaResponseDto guardarCompetencia(MarcaCompetenciaModel competencia) {
+		try {
+			return catalogoMapper.toDto(marcaCompetenciaRepository.save(competencia));
+		} catch (DataIntegrityViolationException ex) {
+			throw new BusinessException("Ya existe una marca de competencia con ese nombre para esta marca");
+		}
 	}
 
 	public List<CategoriaMaterialResponseDto> listarCategoriasMaterial(FamiliaMaterial familia) {
