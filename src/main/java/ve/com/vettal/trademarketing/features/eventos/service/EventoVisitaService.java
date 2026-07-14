@@ -3,7 +3,6 @@ package ve.com.vettal.trademarketing.features.eventos.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ve.com.vettal.trademarketing.common.exception.BusinessException;
 import ve.com.vettal.trademarketing.common.exception.ResourceNotFoundException;
 import ve.com.vettal.trademarketing.features.eventos.dto.EventoVisitaRequestDto;
 import ve.com.vettal.trademarketing.features.eventos.dto.EventoVisitaResponseDto;
@@ -35,27 +34,27 @@ public class EventoVisitaService {
 		VisitaModel visita = visitaRepository.findById(request.getVisitaId())
 				.orElseThrow(() -> new ResourceNotFoundException("Visita no encontrada con id " + request.getVisitaId()));
 
-		if (eventoVisitaRepository.findByVisitaId(request.getVisitaId()).isPresent()) {
-			throw new BusinessException("Esta visita ya tiene un evento registrado");
-		}
+		// El mercaderista puede volver atrás y reconsiderar el motivo/detalle del
+		// evento antes de terminar la visita, así que este endpoint actualiza el
+		// evento existente de la visita en vez de rechazar el segundo envío.
+		EventoVisitaModel evento = eventoVisitaRepository.findByVisitaId(request.getVisitaId())
+				.orElseGet(() -> EventoVisitaModel.builder().visita(visita).build());
 
-		EventoVisitaModel evento = EventoVisitaModel.builder()
-				.visita(visita)
-				.motivo(request.getMotivo())
-				.motivoOtroDetalle(request.getMotivoOtroDetalle())
-				.nombreEvento(request.getNombreEvento())
-				.ciudad(request.getCiudad())
-				.estado(request.getEstado())
-				.lugarRealizacion(request.getLugarRealizacion())
-				.fechaEvento(request.getFechaEvento())
-				.horaInicio(request.getHoraInicio())
-				.horaFin(request.getHoraFin())
-				.organizador(request.getOrganizador())
-				.objetivoParticipacion(request.getObjetivoParticipacion())
-				.participacionVettal(request.getParticipacionVettal())
-				.cantidadAsistentesEstimada(request.getCantidadAsistentesEstimada())
-				.build();
+		evento.setMotivo(request.getMotivo());
+		evento.setMotivoOtroDetalle(request.getMotivoOtroDetalle());
+		evento.setNombreEvento(request.getNombreEvento());
+		evento.setCiudad(request.getCiudad());
+		evento.setEstado(request.getEstado());
+		evento.setLugarRealizacion(request.getLugarRealizacion());
+		evento.setFechaEvento(request.getFechaEvento());
+		evento.setHoraInicio(request.getHoraInicio());
+		evento.setHoraFin(request.getHoraFin());
+		evento.setOrganizador(request.getOrganizador());
+		evento.setObjetivoParticipacion(request.getObjetivoParticipacion());
+		evento.setParticipacionVettal(request.getParticipacionVettal());
+		evento.setCantidadAsistentesEstimada(request.getCantidadAsistentesEstimada());
 
+		evento.getLeads().clear();
 		if (request.getLeads() != null) {
 			request.getLeads().forEach(lead -> evento.addLead(
 					EventoLeadModel.builder()
@@ -67,6 +66,7 @@ public class EventoVisitaService {
 							.build()));
 		}
 
+		evento.getEntrevistas().clear();
 		if (request.getVideosEntrevistaUrls() != null) {
 			request.getVideosEntrevistaUrls().forEach(url -> evento.addEntrevista(
 					EventoEntrevistaModel.builder().videoUrl(url).build()));
