@@ -8,5 +8,8 @@ public enum CategoriaEvidencia {
 	COMPETENCIA,
 	MATERIAL_POP,
 	ANTES,
-	DESPUES
+	DESPUES,
+	MONTAJE,
+	DESARROLLO,
+	CIERRE
 }

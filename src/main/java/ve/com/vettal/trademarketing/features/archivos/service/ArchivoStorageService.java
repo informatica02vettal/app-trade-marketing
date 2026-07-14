@@ -36,7 +36,7 @@ public class ArchivoStorageService {
 			throw new BusinessException("Tipo de archivo no permitido: " + file.getContentType());
 		}
 		if (file.getSize() > ArchivoConstants.TAMANIO_MAXIMO_BYTES) {
-			throw new BusinessException("El archivo excede el tamaño máximo permitido (10MB)");
+			throw new BusinessException("El archivo excede el tamaño máximo permitido (50MB)");
 		}
 
 		String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
