@@ -40,7 +40,11 @@ public class SolicitudService {
 	private final AuthenticatedUserProvider authenticatedUserProvider;
 
 	@Transactional(readOnly = true)
-	public List<SolicitudResponseDto> listar(EstadoSolicitud estado, Long solicitanteId) {
+	public List<SolicitudResponseDto> listar(EstadoSolicitud estado, Long solicitanteId, Long visitaId) {
+		if (visitaId != null) {
+			return solicitudMapper.toDtoList(solicitudRepository.findByVisitaId(visitaId));
+		}
+
 		Long solicitanteIdFiltro = solicitanteId;
 		if (!authenticatedUserProvider.esAdminOSupervisor() && solicitanteIdFiltro == null) {
 			solicitanteIdFiltro = authenticatedUserProvider.getUsuarioActual().getId();

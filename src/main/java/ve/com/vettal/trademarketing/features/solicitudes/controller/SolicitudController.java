@@ -36,8 +36,9 @@ public class SolicitudController {
 	@GetMapping
 	public ResponseEntity<ApiResponseDto<List<SolicitudResponseDto>>> listar(
 			@RequestParam(required = false) EstadoSolicitud estado,
-			@RequestParam(required = false) Long solicitanteId) {
-		List<SolicitudResponseDto> solicitudes = solicitudService.listar(estado, solicitanteId);
+			@RequestParam(required = false) Long solicitanteId,
+			@RequestParam(required = false) Long visitaId) {
+		List<SolicitudResponseDto> solicitudes = solicitudService.listar(estado, solicitanteId, visitaId);
 		return ResponseEntity.ok(ApiResponseDto.ok(solicitudes, "Solicitudes obtenidas"));
 	}
 

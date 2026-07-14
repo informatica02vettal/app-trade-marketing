@@ -12,4 +12,6 @@ public interface SolicitudRepository extends JpaRepository<SolicitudModel, Long>
 	List<SolicitudModel> findBySolicitanteId(Long solicitanteId);
 
 	List<SolicitudModel> findByEstadoAndSolicitanteId(EstadoSolicitud estado, Long solicitanteId);
+
+	List<SolicitudModel> findByVisitaId(Long visitaId);
 }

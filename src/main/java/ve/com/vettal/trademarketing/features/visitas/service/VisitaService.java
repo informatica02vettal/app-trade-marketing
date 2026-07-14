@@ -75,6 +75,11 @@ public class VisitaService {
 		return toResponseDto(visitaRepository.save(visita));
 	}
 
+	@Transactional(readOnly = true)
+	public List<EvidenciaFotoResponseDto> listarFotos(Long visitaId) {
+		return evidenciaFotoMapper.toDtoList(evidenciaFotoRepository.findByVisitaId(visitaId));
+	}
+
 	@Transactional
 	public EvidenciaFotoResponseDto agregarFoto(Long visitaId, EvidenciaFotoRequestDto request) {
 		VisitaModel visita = visitaRepository.findById(visitaId)

@@ -64,7 +64,7 @@ public class KpiService {
 				.average()
 				.orElse(0);
 
-		long oportunidadesDetectadas = hallazgoMercadoRepository.buscar(TipoHallazgo.OBSERVACION_MERCADO, null, null).size();
+		long oportunidadesDetectadas = hallazgoMercadoRepository.buscar(TipoHallazgo.OBSERVACION_MERCADO, null, null, null).size();
 		long solicitudesGeneradas = solicitudRepository.count();
 
 		List<CoberturaRegionDto> coberturaPorRegion = planes.stream()

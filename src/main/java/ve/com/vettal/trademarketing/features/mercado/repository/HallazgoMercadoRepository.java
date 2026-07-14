@@ -14,8 +14,9 @@ public interface HallazgoMercadoRepository extends JpaRepository<HallazgoMercado
 			where (:tipo is null or h.tipo = :tipo)
 			and (:usuarioId is null or h.usuario.id = :usuarioId)
 			and (:marcaId is null or h.marca.id = :marcaId)
+			and (:visitaId is null or h.visita.id = :visitaId)
 			order by h.createdAt desc
 			""")
 	List<HallazgoMercadoModel> buscar(@Param("tipo") TipoHallazgo tipo, @Param("usuarioId") Long usuarioId,
-			@Param("marcaId") Long marcaId);
+			@Param("marcaId") Long marcaId, @Param("visitaId") Long visitaId);
 }

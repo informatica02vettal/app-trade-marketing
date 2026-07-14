@@ -46,6 +46,12 @@ public class VisitaController {
 		return ResponseEntity.status(201).body(ApiResponseDto.created(visita, "Check-in registrado"));
 	}
 
+	@GetMapping("/{id}/fotos")
+	public ResponseEntity<ApiResponseDto<List<EvidenciaFotoResponseDto>>> listarFotos(@PathVariable Long id) {
+		List<EvidenciaFotoResponseDto> fotos = visitaService.listarFotos(id);
+		return ResponseEntity.ok(ApiResponseDto.ok(fotos, "Evidencia fotográfica obtenida"));
+	}
+
 	@PostMapping("/{id}/fotos")
 	public ResponseEntity<ApiResponseDto<EvidenciaFotoResponseDto>> agregarFoto(
 			@PathVariable Long id,

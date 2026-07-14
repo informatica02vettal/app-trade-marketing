@@ -39,8 +39,8 @@ public class HallazgoMercadoService {
 	private final AuthenticatedUserProvider authenticatedUserProvider;
 
 	@Transactional(readOnly = true)
-	public List<HallazgoMercadoResponseDto> listar(TipoHallazgo tipo, Long usuarioId, Long marcaId) {
-		return hallazgoMercadoMapper.toDtoList(hallazgoMercadoRepository.buscar(tipo, usuarioId, marcaId));
+	public List<HallazgoMercadoResponseDto> listar(TipoHallazgo tipo, Long usuarioId, Long marcaId, Long visitaId) {
+		return hallazgoMercadoMapper.toDtoList(hallazgoMercadoRepository.buscar(tipo, usuarioId, marcaId, visitaId));
 	}
 
 	@Transactional
