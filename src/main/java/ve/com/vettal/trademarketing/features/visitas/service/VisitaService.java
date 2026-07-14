@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ve.com.vettal.trademarketing.common.exception.BusinessException;
 import ve.com.vettal.trademarketing.common.exception.ResourceNotFoundException;
 import ve.com.vettal.trademarketing.common.security.AuthenticatedUserProvider;
+import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
+import ve.com.vettal.trademarketing.features.catalogos.repository.MarcaRepository;
 import ve.com.vettal.trademarketing.features.planvisitas.model.EstadoPlanVisita;
 import ve.com.vettal.trademarketing.features.planvisitas.model.PlanVisitaModel;
 import ve.com.vettal.trademarketing.features.planvisitas.repository.PlanVisitaRepository;
@@ -32,6 +34,7 @@ public class VisitaService {
 	private final VisitaRepository visitaRepository;
 	private final EvidenciaFotoRepository evidenciaFotoRepository;
 	private final PlanVisitaRepository planVisitaRepository;
+	private final MarcaRepository marcaRepository;
 	private final VisitaMapper visitaMapper;
 	private final EvidenciaFotoMapper evidenciaFotoMapper;
 	private final AuthenticatedUserProvider authenticatedUserProvider;
@@ -48,6 +51,13 @@ public class VisitaService {
 				: visitaRepository.findAll();
 
 		return visitas.stream().map(this::toResponseDto).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public VisitaResponseDto obtener(Long id) {
+		VisitaModel visita = visitaRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Visita no encontrada con id " + id));
+		return toResponseDto(visita);
 	}
 
 	@Transactional
@@ -89,8 +99,15 @@ public class VisitaService {
 			throw new BusinessException("No se pueden agregar fotos a una visita ya completada");
 		}
 
+		MarcaModel marca = null;
+		if (request.getMarcaId() != null) {
+			marca = marcaRepository.findById(request.getMarcaId())
+					.orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada con id " + request.getMarcaId()));
+		}
+
 		EvidenciaFotoModel foto = EvidenciaFotoModel.builder()
 				.visita(visita)
+				.marca(marca)
 				.categoria(request.getCategoria())
 				.url(request.getUrl())
 				.build();

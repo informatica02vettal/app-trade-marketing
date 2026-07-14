@@ -34,5 +34,6 @@ public class AuditoriaMarcaResponseDto {
 	private EstadoPop estadoPop;
 	private String competenciaDetectada;
 	private String oportunidad;
+	private boolean completa;
 	private LocalDateTime createdAt;
 }

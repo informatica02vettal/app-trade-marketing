@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
 
 @Entity
 @Table(name = "evidencia_fotos")
@@ -34,6 +35,11 @@ public class EvidenciaFotoModel {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "visita_id", nullable = false)
 	private VisitaModel visita;
+
+	/** Marca a la que pertenece esta foto (solo aplica a evidencia de auditoría de marca). */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "marca_id", nullable = true)
+	private MarcaModel marca;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "categoria", nullable = false, length = 20)

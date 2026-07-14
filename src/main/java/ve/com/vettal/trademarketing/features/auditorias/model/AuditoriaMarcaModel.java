@@ -78,11 +78,11 @@ public class AuditoriaMarcaModel {
 	private boolean empleadosUniforme;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "estado_exhibidores", nullable = false, length = 20)
+	@Column(name = "estado_exhibidores", length = 20)
 	private EstadoExhibidor estadoExhibidores;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "estado_pop", nullable = false, length = 20)
+	@Column(name = "estado_pop", length = 20)
 	private EstadoPop estadoPop;
 
 	@Column(name = "competencia_detectada", length = 255)
@@ -90,6 +90,11 @@ public class AuditoriaMarcaModel {
 
 	@Column(name = "oportunidad", columnDefinition = "TEXT")
 	private String oportunidad;
+
+	/** Falso mientras el mercaderista todavía está llenando la auditoría (guardado incremental). */
+	@Builder.Default
+	@Column(name = "completa", nullable = false)
+	private boolean completa = true;
 
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;

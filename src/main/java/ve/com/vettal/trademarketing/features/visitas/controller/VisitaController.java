@@ -39,6 +39,11 @@ public class VisitaController {
 		return ResponseEntity.ok(ApiResponseDto.ok(visitas, "Visitas obtenidas"));
 	}
 
+	@GetMapping("/{id}")
+	public ResponseEntity<ApiResponseDto<VisitaResponseDto>> obtener(@PathVariable Long id) {
+		return ResponseEntity.ok(ApiResponseDto.ok(visitaService.obtener(id), "Visita obtenida"));
+	}
+
 	@PostMapping
 	public ResponseEntity<ApiResponseDto<VisitaResponseDto>> checkin(
 			@Valid @RequestBody VisitaCheckinRequestDto request) {

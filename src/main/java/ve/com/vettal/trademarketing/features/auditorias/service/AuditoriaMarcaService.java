@@ -32,6 +32,13 @@ public class AuditoriaMarcaService {
 		return auditoriaMarcaMapper.toDtoList(auditoriaMarcaRepository.findByVisitaId(visitaId));
 	}
 
+	/**
+	 * Crea o actualiza (upsert por visita+marca) la auditoría de esta marca.
+	 * Se llama repetidamente durante el flujo (cada respuesta/foto guarda de
+	 * inmediato con {@code completa=false}) y una última vez con
+	 * {@code completa=true} al terminar, para que el progreso quede siempre
+	 * en la base de datos y se pueda retomar desde cualquier dispositivo.
+	 */
 	@Transactional
 	public AuditoriaMarcaResponseDto crear(AuditoriaMarcaRequestDto request) {
 		VisitaModel visita = visitaRepository.findById(request.getVisitaId())
@@ -44,39 +51,42 @@ public class AuditoriaMarcaService {
 		MarcaModel marca = marcaRepository.findById(request.getMarcaId())
 				.orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada con id " + request.getMarcaId()));
 
+		AuditoriaMarcaModel auditoria = auditoriaMarcaRepository
+				.findByVisitaIdAndMarcaId(request.getVisitaId(), request.getMarcaId())
+				.orElseGet(() -> AuditoriaMarcaModel.builder().visita(visita).marca(marca).build());
+
 		// Regla 1: sin exhibidor de marca no puede haber producto en exhibidor.
 		boolean productoExhibidor = request.isExhibidorMarca() && request.isProductoExhibidor();
 
 		// Regla 2: sin ningún elemento de comunicación visible, el POP se considera faltante.
 		boolean sinMaterialPop = !request.isAvisoPared() && !request.isBanderines()
 				&& !request.isRotulado() && !request.isEmpleadosUniforme();
-		EstadoPop estadoPop = sinMaterialPop ? EstadoPop.FALTANTE : request.getEstadoPop();
+		EstadoPop estadoPop = request.getEstadoPop() == null
+				? null
+				: (sinMaterialPop ? EstadoPop.FALTANTE : request.getEstadoPop());
 
 		// Regla 3: el porcentaje de anaquel siempre se recalcula en el servidor.
 		int frentesVettal = request.getFrentesVettal() != null ? request.getFrentesVettal() : 0;
 		int frentesTotales = request.getFrentesTotales() != null ? request.getFrentesTotales() : 0;
 		int anaquelPct = frentesTotales > 0 ? (int) Math.round((frentesVettal * 100.0) / frentesTotales) : 0;
 
-		AuditoriaMarcaModel auditoria = AuditoriaMarcaModel.builder()
-				.visita(visita)
-				.marca(marca)
-				.presenciaPct(request.getPresenciaPct())
-				.anaquelPct(anaquelPct)
-				.frentesVettal(frentesVettal)
-				.frentesTotales(frentesTotales)
-				.exhibidorMarca(request.isExhibidorMarca())
-				.productoExhibidor(productoExhibidor)
-				.productoAnaquel(request.isProductoAnaquel())
-				.avisoFachada(request.isAvisoFachada())
-				.avisoPared(request.isAvisoPared())
-				.banderines(request.isBanderines())
-				.rotulado(request.isRotulado())
-				.empleadosUniforme(request.isEmpleadosUniforme())
-				.estadoExhibidores(request.getEstadoExhibidores())
-				.estadoPop(estadoPop)
-				.competenciaDetectada(request.getCompetenciaDetectada())
-				.oportunidad(request.getOportunidad())
-				.build();
+		auditoria.setPresenciaPct(request.getPresenciaPct() != null ? request.getPresenciaPct() : 0);
+		auditoria.setAnaquelPct(anaquelPct);
+		auditoria.setFrentesVettal(frentesVettal);
+		auditoria.setFrentesTotales(frentesTotales);
+		auditoria.setExhibidorMarca(request.isExhibidorMarca());
+		auditoria.setProductoExhibidor(productoExhibidor);
+		auditoria.setProductoAnaquel(request.isProductoAnaquel());
+		auditoria.setAvisoFachada(request.isAvisoFachada());
+		auditoria.setAvisoPared(request.isAvisoPared());
+		auditoria.setBanderines(request.isBanderines());
+		auditoria.setRotulado(request.isRotulado());
+		auditoria.setEmpleadosUniforme(request.isEmpleadosUniforme());
+		auditoria.setEstadoExhibidores(request.getEstadoExhibidores());
+		auditoria.setEstadoPop(estadoPop);
+		auditoria.setCompetenciaDetectada(request.getCompetenciaDetectada());
+		auditoria.setOportunidad(request.getOportunidad());
+		auditoria.setCompleta(request.isCompleta());
 
 		return auditoriaMarcaMapper.toDto(auditoriaMarcaRepository.save(auditoria));
 	}

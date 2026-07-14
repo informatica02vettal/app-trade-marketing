@@ -11,5 +11,6 @@ public enum CategoriaEvidencia {
 	DESPUES,
 	MONTAJE,
 	DESARROLLO,
-	CIERRE
+	CIERRE,
+	ENTREVISTA
 }

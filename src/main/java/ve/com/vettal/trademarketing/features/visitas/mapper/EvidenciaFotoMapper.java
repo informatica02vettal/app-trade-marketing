@@ -10,6 +10,7 @@ import ve.com.vettal.trademarketing.features.visitas.model.EvidenciaFotoModel;
 public interface EvidenciaFotoMapper {
 
 	@Mapping(target = "visitaId", source = "visita.id")
+	@Mapping(target = "marcaId", source = "marca.id")
 	EvidenciaFotoResponseDto toDto(EvidenciaFotoModel model);
 
 	List<EvidenciaFotoResponseDto> toDtoList(List<EvidenciaFotoModel> models);

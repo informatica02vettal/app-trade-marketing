@@ -15,6 +15,7 @@ public class EvidenciaFotoResponseDto {
 
 	private Long id;
 	private Long visitaId;
+	private Long marcaId;
 	private CategoriaEvidencia categoria;
 	private String url;
 	private LocalDateTime createdAt;

@@ -17,4 +17,7 @@ public class EvidenciaFotoRequestDto {
 
 	@NotBlank(message = "La URL de la foto es obligatoria")
 	private String url;
+
+	/** Marca a la que pertenece esta foto, si aplica (auditoría de marca). */
+	private Long marcaId;
 }
