@@ -61,7 +61,7 @@ app:
     password: ${ADMIN_PASSWORD:CAMBIA_ESTA_CLAVE_TEMPORAL}
     nombre: ${ADMIN_NOMBRE:Administrador}
   storage:
-    base-path: ${STORAGE_BASE_PATH:./uploads}
+    base-path: ${STORAGE_BASE_PATH:./media}
 
 jwt:
   secret: ${JWT_SECRET}
