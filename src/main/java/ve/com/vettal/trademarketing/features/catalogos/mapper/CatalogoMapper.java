@@ -21,6 +21,7 @@ public interface CatalogoMapper {
 
 	List<MarcaResponseDto> toMarcaDtoList(List<MarcaModel> models);
 
+	@Mapping(target = "marcaId", source = "marca.id")
 	MarcaCompetenciaResponseDto toDto(MarcaCompetenciaModel model);
 
 	List<MarcaCompetenciaResponseDto> toCompetenciaDtoList(List<MarcaCompetenciaModel> models);

@@ -12,5 +12,7 @@ import lombok.NoArgsConstructor;
 public class MarcaCompetenciaResponseDto {
 
 	private Long id;
+	private Long marcaId;
 	private String nombre;
+	private boolean activo;
 }

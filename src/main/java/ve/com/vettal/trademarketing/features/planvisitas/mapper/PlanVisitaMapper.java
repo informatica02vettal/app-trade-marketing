@@ -5,6 +5,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ve.com.vettal.trademarketing.features.planvisitas.dto.PlanVisitaResponseDto;
 import ve.com.vettal.trademarketing.features.planvisitas.model.PlanVisitaModel;
+import ve.com.vettal.trademarketing.features.productos.dto.ProductoResumenDto;
+import ve.com.vettal.trademarketing.features.productos.model.ProductoErpModel;
 
 @Mapper(componentModel = "spring")
 public interface PlanVisitaMapper {
@@ -20,4 +22,6 @@ public interface PlanVisitaMapper {
 	PlanVisitaResponseDto toDto(PlanVisitaModel model);
 
 	List<PlanVisitaResponseDto> toDtoList(List<PlanVisitaModel> models);
+
+	ProductoResumenDto toResumenDto(ProductoErpModel model);
 }

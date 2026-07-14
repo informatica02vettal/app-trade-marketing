@@ -22,8 +22,8 @@ spring:
     time-zone: America/Caracas
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 60MB
+      max-request-size: 60MB
 
 server:
   port: ${SERVER_PORT:8081}
@@ -38,9 +38,11 @@ server:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
 
-# API externa (vettal-backend) de donde se consultan los clientes del ERP.
-# Se consume vía HTTP con autenticación Basic — esta app NO abre una conexión
-# de base de datos al ERP, solo llama a su endpoint REST ya existente.
+# APIs externas del ERP. Esta app NO abre una conexión de base de datos al
+# ERP, solo llama a sus endpoints REST ya existentes.
+# - clientes-api (vettal-backend): autenticación HTTP Basic.
+# - productos-api (API propia del ERP, tabla lista_prod_pw): autenticación
+#   con apikey por query param.
 app:
   clientes-api:
     base-url: ${CLIENTES_API_BASE_URL}
@@ -48,12 +50,18 @@ app:
     password: ${CLIENTES_API_PASSWORD}
     connect-timeout-ms: ${CLIENTES_API_CONNECT_TIMEOUT_MS:5000}
     read-timeout-ms: ${CLIENTES_API_READ_TIMEOUT_MS:10000}
+  productos-api:
+    base-url: ${PRODUCTOS_API_BASE_URL}
+    api-key: ${PRODUCTOS_API_KEY}
+    tabla: ${PRODUCTOS_API_TABLA:lista_prod_pw}
+    connect-timeout-ms: ${PRODUCTOS_API_CONNECT_TIMEOUT_MS:5000}
+    read-timeout-ms: ${PRODUCTOS_API_READ_TIMEOUT_MS:15000}
   admin-seed:
     email: ${ADMIN_EMAIL:admin@vettal.com.ve}
     password: ${ADMIN_PASSWORD:CAMBIA_ESTA_CLAVE_TEMPORAL}
     nombre: ${ADMIN_NOMBRE:Administrador}
   storage:
-    base-path: ${STORAGE_BASE_PATH:./uploads}
+    base-path: ${STORAGE_BASE_PATH:./media}
 
 jwt:
   secret: ${JWT_SECRET}
