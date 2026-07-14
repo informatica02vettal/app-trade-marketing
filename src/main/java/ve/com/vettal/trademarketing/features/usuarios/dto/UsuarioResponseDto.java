@@ -16,7 +16,6 @@ public class UsuarioResponseDto {
 	private String nombre;
 	private String email;
 	private String region;
-	private String ejecutivoAsociado;
 	private RolUsuario rol;
 	private boolean activo;
 }

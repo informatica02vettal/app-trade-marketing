@@ -45,7 +45,6 @@ public class UsuarioService {
 				.email(request.getEmail())
 				.passwordHash(passwordEncoder.encode(request.getPassword()))
 				.region(request.getRegion())
-				.ejecutivoAsociado(request.getEjecutivoAsociado())
 				.rol(request.getRol())
 				.activo(request.getActivo() == null || request.getActivo())
 				.build();
@@ -65,7 +64,6 @@ public class UsuarioService {
 		usuario.setNombre(request.getNombre());
 		usuario.setEmail(request.getEmail());
 		usuario.setRegion(request.getRegion());
-		usuario.setEjecutivoAsociado(request.getEjecutivoAsociado());
 		usuario.setRol(request.getRol());
 		if (request.getActivo() != null) {
 			usuario.setActivo(request.getActivo());
