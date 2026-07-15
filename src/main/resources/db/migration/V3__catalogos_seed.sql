@@ -1,11 +1,3 @@
--- ============================================================
--- Seed de catálogos: marcas propias, marcas de competencia (catálogo
--- actual del frontend + ampliación solicitada por Blanca Labrador),
--- categorías/materiales de Publicidad y Trade-Marketing, y categorías
--- de producto del módulo Mercado.
--- ============================================================
-
--- ---------- Marcas propias de Vettal ----------
 INSERT INTO marcas (id, codigo, nombre) VALUES
 (1, 'LEO',     'Leo'),
 (2, 'WORKPRO', 'WorkPro'),
@@ -16,16 +8,12 @@ INSERT INTO marcas (id, codigo, nombre) VALUES
 (7, 'ITAP',    'Itap'),
 (8, 'ERA',     'Era');
 
--- ---------- Marcas de la competencia por marca propia ----------
-
--- LEO (catálogo actual + ampliación de Blanca)
 INSERT INTO marcas_competencia (marca_id, nombre) VALUES
 (1, 'SHIMGE'), (1, 'INTOP'), (1, 'PEARL'), (1, 'TAIFU'), (1, 'PANELLI'), (1, 'BAICO'),
 (1, 'ESPA'), (1, 'Pedrollo'), (1, 'Griven'), (1, 'Calpeda'), (1, 'Truper'), (1, 'Stanley'),
 (1, 'Lince'), (1, 'Wokin'), (1, 'Excellent'), (1, 'Exceline'), (1, 'Faboven'),
 (1, 'Gladiator PRO'), (1, 'City Pumps'), (1, 'Strugger'), (1, 'Daewoo'), (1, 'Caprino');
 
--- WORKPRO (catálogo actual + ampliación de Blanca; Lobster ya existía, no se duplica)
 INSERT INTO marcas_competencia (marca_id, nombre) VALUES
 (2, 'TOTAL'), (2, 'INGCO'), (2, 'JADEVER'), (2, 'EMTOP'), (2, 'WADFOW'), (2, 'BOSCH'),
 (2, 'PROMAKER'), (2, 'DEWALT'), (2, 'LOBSTER'), (2, 'BRUFER'), (2, 'MAKITA'), (2, 'SKILL'),
@@ -33,38 +21,31 @@ INSERT INTO marcas_competencia (marca_id, nombre) VALUES
 (2, 'Atouan'), (2, 'Exxel'), (2, 'Roccin'), (2, 'Ridgid'), (2, 'Bellota'), (2, 'Greenlee'),
 (2, 'Cinhell'), (2, 'Daewoo'), (2, 'Black + Decker');
 
--- HAPPY (comparte catálogo de competencia con LEO)
 INSERT INTO marcas_competencia (marca_id, nombre) VALUES
 (3, 'SHIMGE'), (3, 'INTOP'), (3, 'PEARL'), (3, 'TAIFU'), (3, 'PANELLI'), (3, 'BAICO'),
 (3, 'ESPA'), (3, 'Pedrollo'), (3, 'Griven'), (3, 'Calpeda'), (3, 'Truper'), (3, 'Stanley'),
 (3, 'Lince'), (3, 'Wokin'), (3, 'Excellent'), (3, 'Exceline'), (3, 'Faboven'),
 (3, 'Gladiator PRO'), (3, 'City Pumps'), (3, 'Strugger'), (3, 'Daewoo'), (3, 'Caprino');
 
--- BLU (catálogo actual + ampliación de Blanca)
 INSERT INTO marcas_competencia (marca_id, nombre) VALUES
 (4, 'ZOWA'), (4, 'PUREPRO'), (4, 'GRIVEN'), (4, 'GRIMAX'), (4, 'SALUDVEN'), (4, 'OZONO'), (4, 'CLEMENTE'),
 (4, 'Water Quality'), (4, 'Charger'), (4, 'Sediment'), (4, 'Clear Water');
 
--- TENGEN (sin cambios)
 INSERT INTO marcas_competencia (marca_id, nombre) VALUES
 (5, 'CHINT'), (5, 'ANDELLI'), (5, 'GE'), (5, 'SCHENIDER'), (5, 'BTICINO'), (5, 'CNC'), (5, 'DELIXI'), (5, 'STECK'), (5, 'VITRON');
 
--- VESTRA (catálogo actual + ampliación de Blanca)
 INSERT INTO marcas_competencia (marca_id, nombre) VALUES
 (6, 'COVO'), (6, 'FP'), (6, 'TORRENTI'), (6, 'GRIVEN'), (6, 'BELT-G'), (6, 'GRINACA'),
 (6, 'AQUA PLUS'), (6, 'SALUDVEN'), (6, 'GRIMAX'), (6, 'AQUAFINA'),
 (6, 'Galven'), (6, 'Tezza');
 
--- ITAP (sin cambios)
 INSERT INTO marcas_competencia (marca_id, nombre) VALUES
 (7, 'COVO'), (7, 'FP'), (7, 'TORRENTI'), (7, 'GRIVEN'), (7, 'BELT-G'), (7, 'GRINACA'),
 (7, 'AQUA PLUS'), (7, 'SALUDVEN'), (7, 'GRIMAX'), (7, 'AQUAFINA');
 
--- ERA (sin cambios)
 INSERT INTO marcas_competencia (marca_id, nombre) VALUES
 (8, 'TUBRICA'), (8, 'PACVO'), (8, 'PCP'), (8, 'TIGRE'), (8, 'DONSEN'), (8, 'TERMOFUZION'), (8, 'ZHOU');
 
--- ---------- Categorías de material ----------
 INSERT INTO categorias_material (id, familia, nombre) VALUES
 (1, 'TRADE_MARKETING', 'Exhibición'),
 (2, 'TRADE_MARKETING', 'Señalización'),
@@ -73,10 +54,6 @@ INSERT INTO categorias_material (id, familia, nombre) VALUES
 (5, 'PUBLICIDAD', 'Online'),
 (6, 'PUBLICIDAD', 'Offline');
 
--- ---------- Materiales de Trade-Marketing ----------
-
--- Exhibición: LEO tiene su propio surtido (incluye bombas sumergibles);
--- el resto de las marcas usa el genérico (marca_id NULL).
 INSERT INTO materiales (marca_id, categoria_id, nombre, requiere_medidas, requiere_ubicacion, minimo_fotos) VALUES
 (1, 1, 'Exhibidor grande', 0, 0, 1),
 (1, 1, 'Exhibidor pequeño', 0, 0, 1),
@@ -85,7 +62,6 @@ INSERT INTO materiales (marca_id, categoria_id, nombre, requiere_medidas, requie
 (NULL, 1, 'Exhibidor estándar', 0, 0, 1),
 (NULL, 1, 'Exhibidor personalizado', 1, 1, 2);
 
--- Señalización: genérico para todas las marcas.
 INSERT INTO materiales (marca_id, categoria_id, nombre, requiere_medidas, requiere_ubicacion, minimo_fotos) VALUES
 (NULL, 2, 'Aviso de fachada', 1, 1, 2),
 (NULL, 2, 'Aviso de pared', 1, 1, 2),
@@ -94,27 +70,20 @@ INSERT INTO materiales (marca_id, categoria_id, nombre, requiere_medidas, requie
 (NULL, 2, 'Rotulado', 1, 1, 2),
 (NULL, 2, 'Banderines', 0, 0, 1);
 
--- Activaciones: sin foto obligatoria (se solicitan a futuro, sin evidencia
--- disponible todavía) — cambio pedido por Blanca.
 INSERT INTO materiales (marca_id, categoria_id, nombre, requiere_medidas, requiere_ubicacion, minimo_fotos) VALUES
 (NULL, 3, 'Activaciones PDV', 0, 0, 0),
 (NULL, 3, 'Charla técnica', 0, 0, 0);
 
--- Merchandising: genérico.
 INSERT INTO materiales (marca_id, categoria_id, nombre, requiere_medidas, requiere_ubicacion, minimo_fotos) VALUES
 (NULL, 4, 'Uniformes', 0, 0, 1),
 (NULL, 4, 'POP', 0, 0, 1);
 
--- ---------- Piezas de Publicidad ----------
 INSERT INTO materiales (marca_id, categoria_id, nombre, requiere_medidas, requiere_ubicacion, minimo_fotos) VALUES
 (NULL, 5, 'Patrocinio ADS', 0, 0, 1),
 (NULL, 5, 'Colab', 0, 0, 1),
 (NULL, 6, 'Audiovisual e Impreso', 0, 0, 1),
 (NULL, 6, 'Patrocinio Evento', 0, 0, 1);
 
--- ---------- Categorías de producto del módulo Mercado ----------
--- Cada categoría reutiliza el catálogo de competencia de la marca que mejor
--- la representa (ej. BOMBAS -> competencia de LEO).
 INSERT INTO categorias_producto_mercado (nombre, marca_id) VALUES
 ('BOMBAS', 1),
 ('HERRAMIENTAS', 2),
@@ -123,3 +92,19 @@ INSERT INTO categorias_producto_mercado (nombre, marca_id) VALUES
 ('GRIFERIA', 6),
 ('VALVULERIA', 7),
 ('PVC/PPR', 8);
+
+INSERT INTO objetivo_visita_tipos (nombre) VALUES ('Auditoría de marca'), ('Evento');
+
+INSERT INTO objetivo_visita_subtipos (tipo_id, nombre)
+SELECT id, 'Ruta Vettal' FROM objetivo_visita_tipos WHERE nombre = 'Evento'
+UNION ALL
+SELECT id, 'Charla técnica' FROM objetivo_visita_tipos WHERE nombre = 'Evento';
+
+INSERT INTO objetivo_visita_subtipos (tipo_id, nombre)
+SELECT id, 'Feria' FROM objetivo_visita_tipos WHERE nombre = 'Evento'
+UNION ALL
+SELECT id, 'Exposición' FROM objetivo_visita_tipos WHERE nombre = 'Evento'
+UNION ALL
+SELECT id, 'Congreso' FROM objetivo_visita_tipos WHERE nombre = 'Evento'
+UNION ALL
+SELECT id, 'Rueda de negocios' FROM objetivo_visita_tipos WHERE nombre = 'Evento';

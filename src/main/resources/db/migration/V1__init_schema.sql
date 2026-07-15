@@ -1,10 +1,3 @@
--- ============================================================
--- app-trade-marketing — esquema inicial de la base de datos propia
--- Es la ÚNICA base de datos de esta aplicación. Los datos de clientes
--- del ERP administrativo NO se replican aquí: se consultan en vivo vía
--- el endpoint REST de vettal-backend (ver integration.clientesapi).
--- ============================================================
-
 CREATE TABLE usuarios (
     id                  BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombre              VARCHAR(150)    NOT NULL,
@@ -246,3 +239,316 @@ CREATE TABLE artes_marca (
     tipo_archivo    VARCHAR(20)     NOT NULL DEFAULT 'IMAGEN',
     created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+CREATE TABLE marcas (
+    id      BIGINT AUTO_INCREMENT PRIMARY KEY,
+    codigo  VARCHAR(20)  NOT NULL,
+    nombre  VARCHAR(60)  NOT NULL,
+    activo  TINYINT(1)   NOT NULL DEFAULT 1,
+    CONSTRAINT uk_marcas_codigo UNIQUE (codigo)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+CREATE TABLE marcas_competencia (
+    id        BIGINT AUTO_INCREMENT PRIMARY KEY,
+    marca_id  BIGINT       NOT NULL,
+    nombre    VARCHAR(100) NOT NULL,
+    activo    TINYINT(1)   NOT NULL DEFAULT 1,
+    CONSTRAINT fk_marcomp_marca FOREIGN KEY (marca_id) REFERENCES marcas (id),
+    CONSTRAINT uk_marcomp_marca_nombre UNIQUE (marca_id, nombre)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+CREATE INDEX idx_marcomp_marca ON marcas_competencia (marca_id);
+
+-- familia: PUBLICIDAD | TRADE_MARKETING
+CREATE TABLE categorias_material (
+    id       BIGINT AUTO_INCREMENT PRIMARY KEY,
+    familia  VARCHAR(20)  NOT NULL,
+    nombre   VARCHAR(60)  NOT NULL,
+    activo   TINYINT(1)   NOT NULL DEFAULT 1,
+    CONSTRAINT uk_categoria_material UNIQUE (familia, nombre)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+-- marca_id NULL = el material aplica a todas las marcas.
+CREATE TABLE materiales (
+    id                  BIGINT AUTO_INCREMENT PRIMARY KEY,
+    marca_id            BIGINT       NULL,
+    categoria_id        BIGINT       NOT NULL,
+    nombre              VARCHAR(150) NOT NULL,
+    requiere_medidas    TINYINT(1)   NOT NULL DEFAULT 0,
+    requiere_ubicacion  TINYINT(1)   NOT NULL DEFAULT 0,
+    minimo_fotos        INT          NOT NULL DEFAULT 1,
+    activo              TINYINT(1)   NOT NULL DEFAULT 1,
+    CONSTRAINT fk_material_marca FOREIGN KEY (marca_id) REFERENCES marcas (id),
+    CONSTRAINT fk_material_categoria FOREIGN KEY (categoria_id) REFERENCES categorias_material (id)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+CREATE INDEX idx_material_marca ON materiales (marca_id);
+CREATE INDEX idx_material_categoria ON materiales (categoria_id);
+
+CREATE TABLE categorias_producto_mercado (
+    id        BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre    VARCHAR(50) NOT NULL,
+    marca_id  BIGINT      NOT NULL,
+    activo    TINYINT(1)  NOT NULL DEFAULT 1,
+    CONSTRAINT uk_categoria_producto_mercado UNIQUE (nombre),
+    CONSTRAINT fk_categoria_producto_marca FOREIGN KEY (marca_id) REFERENCES marcas (id)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+ALTER TABLE solicitudes
+    ADD COLUMN visita_id BIGINT NOT NULL AFTER id,
+    ADD COLUMN marca_id BIGINT NOT NULL AFTER categoria,
+    ADD CONSTRAINT fk_solicitud_visita FOREIGN KEY (visita_id) REFERENCES visitas (id),
+    ADD CONSTRAINT fk_solicitud_marca FOREIGN KEY (marca_id) REFERENCES marcas (id),
+    DROP COLUMN erp_cliente_id,
+    DROP COLUMN cliente_nombre,
+    DROP COLUMN marca;
+
+ALTER TABLE solicitud_items
+    ADD COLUMN material_id BIGINT NOT NULL AFTER solicitud_id,
+    ADD CONSTRAINT fk_solicitud_item_material FOREIGN KEY (material_id) REFERENCES materiales (id),
+    DROP COLUMN nombre,
+    DROP COLUMN foto_url;
+
+CREATE TABLE solicitud_item_fotos (
+    id                  BIGINT AUTO_INCREMENT PRIMARY KEY,
+    solicitud_item_id   BIGINT       NOT NULL,
+    url                 VARCHAR(500) NOT NULL,
+    CONSTRAINT fk_solicitud_item_foto FOREIGN KEY (solicitud_item_id) REFERENCES solicitud_items (id) ON DELETE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+-- ---------- Instalación / Ejecución ----------
+ALTER TABLE instalaciones_ejecucion
+    ADD COLUMN visita_id BIGINT NOT NULL AFTER id,
+    ADD COLUMN marca_id BIGINT NOT NULL AFTER visita_id,
+    ADD CONSTRAINT fk_instalacion_visita FOREIGN KEY (visita_id) REFERENCES visitas (id),
+    ADD CONSTRAINT fk_instalacion_marca FOREIGN KEY (marca_id) REFERENCES marcas (id),
+    DROP COLUMN erp_cliente_id,
+    DROP COLUMN cliente_nombre,
+    DROP COLUMN marca;
+
+ALTER TABLE instalacion_items
+    ADD COLUMN material_id BIGINT NOT NULL AFTER instalacion_id,
+    ADD CONSTRAINT fk_instalacion_item_material FOREIGN KEY (material_id) REFERENCES materiales (id),
+    DROP COLUMN material,
+    DROP COLUMN foto_url;
+
+CREATE TABLE instalacion_item_fotos (
+    id                    BIGINT AUTO_INCREMENT PRIMARY KEY,
+    instalacion_item_id   BIGINT       NOT NULL,
+    url                   VARCHAR(500) NOT NULL,
+    CONSTRAINT fk_instalacion_item_foto FOREIGN KEY (instalacion_item_id) REFERENCES instalacion_items (id) ON DELETE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+ALTER TABLE auditorias_marca
+    ADD COLUMN marca_id BIGINT NOT NULL AFTER visita_id,
+    ADD CONSTRAINT fk_auditoria_marca FOREIGN KEY (marca_id) REFERENCES marcas (id),
+    DROP COLUMN marca;
+
+ALTER TABLE hallazgos_mercado
+    ADD COLUMN visita_id BIGINT NOT NULL AFTER id,
+    ADD COLUMN categoria_producto_id BIGINT NULL AFTER marca_competencia,
+    ADD COLUMN observacion_texto TEXT NULL AFTER categoria_producto_id,
+    ADD CONSTRAINT fk_hallazgo_visita FOREIGN KEY (visita_id) REFERENCES visitas (id),
+    ADD CONSTRAINT fk_hallazgo_categoria_producto FOREIGN KEY (categoria_producto_id) REFERENCES categorias_producto_mercado (id),
+    DROP COLUMN erp_cliente_id,
+    DROP COLUMN cliente_nombre,
+    DROP COLUMN categoria_producto,
+    DROP COLUMN marca,
+    DROP COLUMN oportunidad_texto;
+
+ALTER TABLE clientes_prospecto
+    ADD COLUMN visita_id BIGINT NOT NULL AFTER id,
+    ADD CONSTRAINT fk_prospecto_visita FOREIGN KEY (visita_id) REFERENCES visitas (id),
+    DROP FOREIGN KEY fk_prospecto_hallazgo,
+    DROP COLUMN hallazgo_id,
+    DROP COLUMN gps_lat,
+    DROP COLUMN gps_lng;
+
+ALTER TABLE hallazgos_mercado
+    ADD COLUMN marca_id BIGINT NULL AFTER visita_id,
+    ADD CONSTRAINT fk_hallazgo_marca FOREIGN KEY (marca_id) REFERENCES marcas (id);
+
+CREATE TABLE clientes_erp (
+    id                   BIGINT AUTO_INCREMENT PRIMARY KEY,
+    codigo_cliente       VARCHAR(10)  NOT NULL,
+    rif                  VARCHAR(20),
+    nombre_fiscal        VARCHAR(200),
+    nombre_comercial     VARCHAR(200),
+    direccion_fiscal     VARCHAR(500),
+    telefono_principal   VARCHAR(50),
+    celular              VARCHAR(50),
+    email                VARCHAR(150),
+    estado               VARCHAR(100),
+    ciudad               VARCHAR(100),
+    municipio            VARCHAR(100),
+    fecha_creacion_erp   DATETIME,
+    sincronizado_en       DATETIME     NOT NULL,
+    CONSTRAINT uq_clientes_erp_codigo UNIQUE (codigo_cliente)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+CREATE TABLE sucursales_cliente_erp (
+    id                   BIGINT AUTO_INCREMENT PRIMARY KEY,
+    erp_id               INT          NOT NULL,
+    codigo_cliente       VARCHAR(10)  NOT NULL,
+    id_vendedor          VARCHAR(38),
+    nombre_sucursal      VARCHAR(255),
+    direccion_sucursal   TEXT,
+    estado               VARCHAR(38),
+    ciudad               VARCHAR(38),
+    sincronizado_en       DATETIME     NOT NULL,
+    CONSTRAINT uq_sucursales_cliente_erp_id UNIQUE (erp_id)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+CREATE INDEX idx_sucursales_cliente_erp_codigo ON sucursales_cliente_erp (codigo_cliente);
+
+CREATE TABLE objetivo_visita_tipos (
+    id     BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    activo BOOLEAN      NOT NULL DEFAULT TRUE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+CREATE TABLE objetivo_visita_subtipos (
+    id      BIGINT AUTO_INCREMENT PRIMARY KEY,
+    tipo_id BIGINT       NOT NULL,
+    nombre  VARCHAR(150) NOT NULL,
+    activo  BOOLEAN      NOT NULL DEFAULT TRUE,
+    CONSTRAINT fk_objetivo_visita_subtipo_tipo FOREIGN KEY (tipo_id) REFERENCES objetivo_visita_tipos (id)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+
+ALTER TABLE plan_visitas
+    ADD COLUMN sucursal_id BIGINT NULL AFTER erp_cliente_id,
+    ADD COLUMN objetivo_tipo_id BIGINT NULL AFTER objetivo,
+    ADD COLUMN objetivo_subtipo_id BIGINT NULL AFTER objetivo_tipo_id,
+    ADD CONSTRAINT fk_plan_visita_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursales_cliente_erp (id),
+    ADD CONSTRAINT fk_plan_visita_objetivo_tipo FOREIGN KEY (objetivo_tipo_id) REFERENCES objetivo_visita_tipos (id),
+    ADD CONSTRAINT fk_plan_visita_objetivo_subtipo FOREIGN KEY (objetivo_subtipo_id) REFERENCES objetivo_visita_subtipos (id);
+
+ALTER TABLE plan_visitas
+    ADD COLUMN comentario TEXT NULL AFTER objetivo_subtipo_id;
+
+
+CREATE TABLE eventos_visita (
+    id                              BIGINT AUTO_INCREMENT PRIMARY KEY,
+    visita_id                       BIGINT       NOT NULL,
+    motivo                          VARCHAR(30)  NOT NULL,
+    motivo_otro_detalle             VARCHAR(255) NULL,
+    nombre_evento                   VARCHAR(200) NULL,
+    ciudad                          VARCHAR(100) NULL,
+    estado                          VARCHAR(100) NULL,
+    lugar_realizacion               VARCHAR(255) NULL,
+    fecha_evento                    DATE         NULL,
+    hora_inicio                     VARCHAR(10)  NULL,
+    hora_fin                        VARCHAR(10)  NULL,
+    organizador                     VARCHAR(200) NULL,
+    objetivo_participacion          VARCHAR(500) NULL,
+    participacion_vettal            VARCHAR(20)  NULL,
+    cantidad_asistentes_estimada    INT          NULL,
+    created_at                      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_eventos_visita_visita UNIQUE (visita_id),
+    CONSTRAINT fk_eventos_visita_visita FOREIGN KEY (visita_id) REFERENCES visitas (id) ON DELETE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+CREATE TABLE evento_leads (
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    evento_id   BIGINT       NOT NULL,
+    nombre      VARCHAR(200) NOT NULL,
+    empresa     VARCHAR(200) NULL,
+    cargo       VARCHAR(150) NULL,
+    telefono    VARCHAR(50)  NULL,
+    correo      VARCHAR(150) NULL,
+    created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_evento_lead_evento FOREIGN KEY (evento_id) REFERENCES eventos_visita (id) ON DELETE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+CREATE INDEX idx_evento_lead_evento ON evento_leads (evento_id);
+
+CREATE TABLE evento_entrevistas (
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    evento_id   BIGINT       NOT NULL,
+    video_url   VARCHAR(500) NOT NULL,
+    created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_evento_entrevista_evento FOREIGN KEY (evento_id) REFERENCES eventos_visita (id) ON DELETE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+CREATE INDEX idx_evento_entrevista_evento ON evento_entrevistas (evento_id);
+
+CREATE TABLE competidores (
+    id                                  BIGINT AUTO_INCREMENT PRIMARY KEY,
+    visita_id                           BIGINT       NOT NULL,
+    nombre_empresa                      VARCHAR(200) NOT NULL,
+    marcas_representadas                VARCHAR(500) NULL,
+    tipo_productos_exhibidos            VARCHAR(500) NULL,
+    tamano_stand                        VARCHAR(100) NULL,
+    cantidad_promotores                 INT          NULL,
+    cantidad_personal_tecnico           INT          NULL,
+    posee_inflables                     BOOLEAN      NOT NULL DEFAULT FALSE,
+    posee_toldos                        BOOLEAN      NOT NULL DEFAULT FALSE,
+    posee_pantalla_led                  BOOLEAN      NOT NULL DEFAULT FALSE,
+    posee_experiencias_interactivas     BOOLEAN      NOT NULL DEFAULT FALSE,
+    realiza_demostraciones              BOOLEAN      NOT NULL DEFAULT FALSE,
+    entrega_material_pop                BOOLEAN      NOT NULL DEFAULT FALSE,
+    entrega_muestras                    BOOLEAN      NOT NULL DEFAULT FALSE,
+    realiza_rifas_concursos             BOOLEAN      NOT NULL DEFAULT FALSE,
+    realiza_promociones_especiales      BOOLEAN      NOT NULL DEFAULT FALSE,
+    cuenta_activaciones                 BOOLEAN      NOT NULL DEFAULT FALSE,
+    posee_exhibidores_diferenciadores   BOOLEAN      NOT NULL DEFAULT FALSE,
+    utiliza_mascotas_publicitarias      BOOLEAN      NOT NULL DEFAULT FALSE,
+    observaciones                       TEXT         NULL,
+    created_at                          TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_competidor_visita FOREIGN KEY (visita_id) REFERENCES visitas (id) ON DELETE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+CREATE INDEX idx_competidor_visita ON competidores (visita_id);
+
+CREATE TABLE competidor_fotos (
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY,
+    competidor_id   BIGINT       NOT NULL,
+    categoria       VARCHAR(20)  NOT NULL,
+    url             VARCHAR(500) NOT NULL,
+    created_at      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_competidor_foto_competidor FOREIGN KEY (competidor_id) REFERENCES competidores (id) ON DELETE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+CREATE INDEX idx_competidor_foto_competidor ON competidor_fotos (competidor_id);
+
+CREATE TABLE productos_erp (
+    id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
+    codigo             VARCHAR(30)  NOT NULL,
+    producto           VARCHAR(500),
+    linea              VARCHAR(200),
+    subcategoria       VARCHAR(200),
+    marca              VARCHAR(100),
+    contenido          VARCHAR(50),
+    peso               DECIMAL(12,4),
+    precio             DECIMAL(14,4),
+    foto_url           VARCHAR(500),
+    nombre_comercial   VARCHAR(500),
+    detalles           TEXT,
+    sincronizado_en    DATETIME     NOT NULL,
+    CONSTRAINT uq_productos_erp_codigo UNIQUE (codigo)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+CREATE TABLE plan_visita_productos (
+    plan_visita_id BIGINT NOT NULL,
+    producto_erp_id BIGINT NOT NULL,
+    PRIMARY KEY (plan_visita_id, producto_erp_id),
+    CONSTRAINT fk_pvp_plan_visita FOREIGN KEY (plan_visita_id) REFERENCES plan_visitas (id),
+    CONSTRAINT fk_pvp_producto_erp FOREIGN KEY (producto_erp_id) REFERENCES productos_erp (id)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+ALTER TABLE hallazgos_mercado
+    ADD COLUMN producto_erp_id BIGINT NULL AFTER marca_id,
+    ADD CONSTRAINT fk_hallazgo_producto_erp FOREIGN KEY (producto_erp_id) REFERENCES productos_erp (id);
+
+ALTER TABLE auditorias_marca
+    MODIFY COLUMN estado_exhibidores VARCHAR(20) NULL,
+    MODIFY COLUMN estado_pop VARCHAR(20) NULL,
+    ADD COLUMN completa TINYINT(1) NOT NULL DEFAULT 1 AFTER oportunidad;
+
+ALTER TABLE evidencia_fotos
+    ADD COLUMN marca_id BIGINT NULL AFTER visita_id,
+    ADD CONSTRAINT fk_evidencia_marca FOREIGN KEY (marca_id) REFERENCES marcas (id);
+
+CREATE INDEX idx_evidencia_marca ON evidencia_fotos (marca_id);
+
+ALTER TABLE eventos_visita
+    ADD COLUMN gps_lat DOUBLE NULL AFTER cantidad_asistentes_estimada,
+    ADD COLUMN gps_lng DOUBLE NULL AFTER gps_lat;
+
