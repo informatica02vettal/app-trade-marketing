@@ -49,7 +49,7 @@ public class AdminSeeder implements ApplicationRunner {
 				.build();
 
 		usuarioRepository.save(admin);
-		log.warn("Usuario ADMIN inicial creado con email '{}'. Si ADMIN_PASSWORD no fue configurado en el .env, "
-				+ "está usando la clave temporal por defecto — inicia sesión y cámbiala de inmediato.", adminEmail);
+		log.warn("Usuario ADMIN inicial creado con email '{}'. La clave viene de app.admin-seed.password "
+				+ "en application-{dev,prod}.yml — inicia sesión y cámbiala de inmediato.", adminEmail);
 	}
 }

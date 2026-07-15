@@ -1,10 +1,38 @@
 spring:
   datasource:
-    url: ${DB_TRADE_URL}
-    username: ${DB_TRADE_USER}
-    password: ${DB_TRADE_PASSWORD}
+    url: jdbc:mariadb://localhost:3306/app_trade_marketing?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: marketing-app
+    password: Vettal.3030
   jpa:
     show-sql: false
+
+jwt:
+  secret: oWO1Qjb1b9w7pulkskITDO8XrlI3I08uH3tXa3qyKnpDOmjfJODc16tfMZ25Zj
+
+# TODO: restringir a la URL real del frontend en producción (hoy abierto con "*").
+cors:
+  allowed-origins: "*"
+
+app:
+  admin-seed:
+    email: admin@vettal.com.ve
+    password: Vettal.3030
+    nombre: Administrador
+  storage:
+    base-path: ./media
+  # TODO: reemplazar por las rutas reales del ERP/vettal-backend en el servidor de producción.
+  clientes-api:
+    base-url: http://localhost:8080
+    username: admin
+    password: 30.60
+    connect-timeout-ms: 5000
+    read-timeout-ms: 10000
+  productos-api:
+    base-url: https://localhost:8001/vettal/apis_vettal/api/v1.php
+    api-key: KrXbUQLgSk2cB384I1xP
+    tabla: lista_prod_pw
+    connect-timeout-ms: 5000
+    read-timeout-ms: 10000
 
 logging:
   level:

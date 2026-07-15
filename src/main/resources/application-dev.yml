@@ -1,13 +1,39 @@
 spring:
   datasource:
-    url: ${DB_TRADE_URL}
-    username: ${DB_TRADE_USER}
-    password: ${DB_TRADE_PASSWORD}
+    url: jdbc:mariadb://localhost:3306/app_trade_marketing?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: 1234
   jpa:
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+
+jwt:
+  secret: BAFF8C2B852C1CBB2479F4BBFC8D519AF0139F46FFFEC549A513CF7887DCF4DF
+
+cors:
+  allowed-origins: "*"
+
+app:
+  admin-seed:
+    email: admin
+    password: "Vettal.3030"
+    nombre: Administrador
+  storage:
+    base-path: ./media
+  clientes-api:
+    base-url: http://192.168.1.2:8080
+    username: admin
+    password: "30.60"
+    connect-timeout-ms: 5000
+    read-timeout-ms: 10000
+  productos-api:
+    base-url: https://192.168.1.2:8001/vettal/apis_vettal/api/v1.php
+    api-key: KrXbUQLgSk2cB384I1xP
+    tabla: lista_prod_pw
+    connect-timeout-ms: 5000
+    read-timeout-ms: 10000
 
 logging:
   level:

@@ -2,7 +2,7 @@ spring:
   application:
     name: app-trade-marketing
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}
+    active: prod
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
@@ -26,7 +26,7 @@ spring:
       max-request-size: 60MB
 
 server:
-  port: ${SERVER_PORT:8081}
+  port: 8081
   servlet:
     context-path: /
   tomcat:
@@ -43,32 +43,13 @@ server:
 # - clientes-api (vettal-backend): autenticación HTTP Basic.
 # - productos-api (API propia del ERP, tabla lista_prod_pw): autenticación
 #   con apikey por query param.
-app:
-  clientes-api:
-    base-url: ${CLIENTES_API_BASE_URL}
-    username: ${CLIENTES_API_USER}
-    password: ${CLIENTES_API_PASSWORD}
-    connect-timeout-ms: ${CLIENTES_API_CONNECT_TIMEOUT_MS:5000}
-    read-timeout-ms: ${CLIENTES_API_READ_TIMEOUT_MS:10000}
-  productos-api:
-    base-url: ${PRODUCTOS_API_BASE_URL}
-    api-key: ${PRODUCTOS_API_KEY}
-    tabla: ${PRODUCTOS_API_TABLA:lista_prod_pw}
-    connect-timeout-ms: ${PRODUCTOS_API_CONNECT_TIMEOUT_MS:5000}
-    read-timeout-ms: ${PRODUCTOS_API_READ_TIMEOUT_MS:15000}
-  admin-seed:
-    email: ${ADMIN_EMAIL:admin@vettal.com.ve}
-    password: ${ADMIN_PASSWORD:CAMBIA_ESTA_CLAVE_TEMPORAL}
-    nombre: ${ADMIN_NOMBRE:Administrador}
-  storage:
-    base-path: ${STORAGE_BASE_PATH:./media}
+# Los valores reales (URLs, credenciales) quedan hardcodeados por entorno
+# en application-dev.yml / application-prod.yml, no acá.
 
 jwt:
-  secret: ${JWT_SECRET}
-  expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  expiration-ms: 86400000
 
 cors:
-  allowed-origins: ${CORS_ALLOWED_ORIGINS:*}
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
   allowed-headers: Authorization,Content-Type,Accept,Origin,X-Requested-With
 
