@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -54,6 +55,14 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<ApiResponseDto<Void>> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
 		return build(HttpStatus.FORBIDDEN, "No tiene permisos para realizar esta acción", request, null);
+	}
+
+	// Más específico que AuthenticationException — Spring elige este handler
+	// para un usuario desactivado en vez del genérico de abajo, así el login
+	// puede distinguir "bloqueado" de "contraseña incorrecta".
+	@ExceptionHandler(DisabledException.class)
+	public ResponseEntity<ApiResponseDto<Void>> handleDisabled(DisabledException ex, HttpServletRequest request) {
+		return build(HttpStatus.UNAUTHORIZED, "Tu usuario está bloqueado. Contacta a un administrador.", request, null);
 	}
 
 	@ExceptionHandler(AuthenticationException.class)

@@ -5,7 +5,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,6 +45,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
+				// El usuario pudo ser desactivado después de emitido este token
+				// (JWT sin estado: no se invalida solo al desactivar la cuenta).
+				// Se corta aquí mismo para que el bloqueo aplique de inmediato en
+				// la siguiente petición, en vez de esperar a que el token expire.
+				if (!userDetails.isEnabled()) {
+					SecurityContextHolder.clearContext();
+					responderUsuarioBloqueado(request, response);
+					return;
+				}
+
 				if (jwtService.isTokenValid(token, userDetails)) {
 					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
 							userDetails, null, userDetails.getAuthorities());
@@ -54,5 +67,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		filterChain.doFilter(request, response);
+	}
+
+	// Mismo estilo que JwtAuthenticationEntryPoint: JSON armado a mano para no
+	// depender de si el proyecto usa Jackson 2 o 3.
+	private void responderUsuarioBloqueado(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String body = """
+				{"status":401,"message":"Tu usuario está bloqueado. Contacta a un administrador.","timestamp":"%s","path":"%s"}"""
+				.formatted(LocalDateTime.now(), escapeJson(request.getRequestURI()));
+
+		response.setStatus(HttpStatus.UNAUTHORIZED.value());
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.getWriter().write(body);
+	}
+
+	private String escapeJson(String value) {
+		return value == null ? "" : value.replace("\\", "\\\\").replace("\"", "\\\"");
 	}
 }
