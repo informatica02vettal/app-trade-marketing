@@ -13,6 +13,7 @@ import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaReque
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MaterialResponseDto;
+import ve.com.vettal.trademarketing.features.catalogos.dto.RegionResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.mapper.CatalogoMapper;
 import ve.com.vettal.trademarketing.features.catalogos.model.CategoriaMaterialModel;
 import ve.com.vettal.trademarketing.features.catalogos.model.FamiliaMaterial;
@@ -23,6 +24,7 @@ import ve.com.vettal.trademarketing.features.catalogos.repository.CategoriaProdu
 import ve.com.vettal.trademarketing.features.catalogos.repository.MarcaCompetenciaRepository;
 import ve.com.vettal.trademarketing.features.catalogos.repository.MarcaRepository;
 import ve.com.vettal.trademarketing.features.catalogos.repository.MaterialRepository;
+import ve.com.vettal.trademarketing.features.catalogos.repository.RegionRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +36,7 @@ public class CatalogoService {
 	private final CategoriaMaterialRepository categoriaMaterialRepository;
 	private final MaterialRepository materialRepository;
 	private final CategoriaProductoMercadoRepository categoriaProductoMercadoRepository;
+	private final RegionRepository regionRepository;
 	private final CatalogoMapper catalogoMapper;
 
 	public List<MarcaResponseDto> listarMarcas() {
@@ -92,5 +95,9 @@ public class CatalogoService {
 
 	public List<CategoriaProductoMercadoResponseDto> listarCategoriasProductoMercado() {
 		return catalogoMapper.toCategoriaProductoDtoList(categoriaProductoMercadoRepository.findByActivoTrue());
+	}
+
+	public List<RegionResponseDto> listarRegiones() {
+		return catalogoMapper.toRegionDtoList(regionRepository.findAllByOrderByNombreAsc());
 	}
 }

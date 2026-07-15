@@ -82,6 +82,17 @@ public class UsuarioService {
 		usuarioRepository.save(usuario);
 	}
 
+	// Solo cambia activo/inactivo, sin tocar ni revalidar el resto del perfil
+	// (nombre, email, etc.) — a diferencia de actualizar(), que exige un DTO
+	// completo y válido. Así, activar/desactivar nunca queda bloqueado por
+	// datos antiguos del registro que no tienen que ver con este cambio.
+	@Transactional
+	public UsuarioResponseDto cambiarEstado(Long id, boolean activo) {
+		UsuarioModel usuario = buscarPorId(id);
+		usuario.setActivo(activo);
+		return usuarioMapper.toDto(usuarioRepository.save(usuario));
+	}
+
 	private UsuarioModel buscarPorId(Long id) {
 		return usuarioRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id " + id));

@@ -22,6 +22,7 @@ import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaReque
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MaterialResponseDto;
+import ve.com.vettal.trademarketing.features.catalogos.dto.RegionResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.model.FamiliaMaterial;
 import ve.com.vettal.trademarketing.features.catalogos.service.CatalogoService;
 import ve.com.vettal.trademarketing.features.usuarios.constants.UsuarioConstants;
@@ -86,5 +87,10 @@ public class CatalogoController {
 	public ResponseEntity<ApiResponseDto<List<CategoriaProductoMercadoResponseDto>>> listarCategoriasProductoMercado() {
 		return ResponseEntity.ok(
 				ApiResponseDto.ok(catalogoService.listarCategoriasProductoMercado(), "Categorías de mercado obtenidas"));
+	}
+
+	@GetMapping("/regiones")
+	public ResponseEntity<ApiResponseDto<List<RegionResponseDto>>> listarRegiones() {
+		return ResponseEntity.ok(ApiResponseDto.ok(catalogoService.listarRegiones(), "Regiones obtenidas"));
 	}
 }

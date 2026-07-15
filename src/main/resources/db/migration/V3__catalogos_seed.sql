@@ -108,3 +108,30 @@ UNION ALL
 SELECT id, 'Congreso' FROM objetivo_visita_tipos WHERE nombre = 'Evento'
 UNION ALL
 SELECT id, 'Rueda de negocios' FROM objetivo_visita_tipos WHERE nombre = 'Evento';
+
+-- Los 23 estados de Venezuela + el Distrito Capital.
+INSERT INTO regiones (id, nombre) VALUES
+(1,  'Amazonas'),
+(2,  'Anzoátegui'),
+(3,  'Apure'),
+(4,  'Aragua'),
+(5,  'Barinas'),
+(6,  'Bolívar'),
+(7,  'Carabobo'),
+(8,  'Cojedes'),
+(9,  'Delta Amacuro'),
+(10, 'Distrito Capital'),
+(11, 'Falcón'),
+(12, 'Guárico'),
+(13, 'La Guaira'),
+(14, 'Lara'),
+(15, 'Mérida'),
+(16, 'Miranda'),
+(17, 'Monagas'),
+(18, 'Nueva Esparta'),
+(19, 'Portuguesa'),
+(20, 'Sucre'),
+(21, 'Táchira'),
+(22, 'Trujillo'),
+(23, 'Yaracuy'),
+(24, 'Zulia');

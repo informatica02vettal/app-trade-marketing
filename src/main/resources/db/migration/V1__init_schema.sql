@@ -552,3 +552,10 @@ ALTER TABLE eventos_visita
     ADD COLUMN gps_lat DOUBLE NULL AFTER cantidad_asistentes_estimada,
     ADD COLUMN gps_lng DOUBLE NULL AFTER gps_lat;
 
+CREATE TABLE regiones (
+    id      BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre  VARCHAR(60) NOT NULL,
+    CONSTRAINT uk_regiones_nombre UNIQUE (nombre)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
+
+

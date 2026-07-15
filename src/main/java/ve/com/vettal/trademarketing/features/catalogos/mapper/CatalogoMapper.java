@@ -8,11 +8,13 @@ import ve.com.vettal.trademarketing.features.catalogos.dto.CategoriaProductoMerc
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MaterialResponseDto;
+import ve.com.vettal.trademarketing.features.catalogos.dto.RegionResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.model.CategoriaMaterialModel;
 import ve.com.vettal.trademarketing.features.catalogos.model.CategoriaProductoMercadoModel;
 import ve.com.vettal.trademarketing.features.catalogos.model.MarcaCompetenciaModel;
 import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
 import ve.com.vettal.trademarketing.features.catalogos.model.MaterialModel;
+import ve.com.vettal.trademarketing.features.catalogos.model.RegionModel;
 
 @Mapper(componentModel = "spring")
 public interface CatalogoMapper {
@@ -41,4 +43,8 @@ public interface CatalogoMapper {
 	CategoriaProductoMercadoResponseDto toDto(CategoriaProductoMercadoModel model);
 
 	List<CategoriaProductoMercadoResponseDto> toCategoriaProductoDtoList(List<CategoriaProductoMercadoModel> models);
+
+	RegionResponseDto toDto(RegionModel model);
+
+	List<RegionResponseDto> toRegionDtoList(List<RegionModel> models);
 }

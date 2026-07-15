@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ve.com.vettal.trademarketing.common.dto.ApiResponseDto;
 import ve.com.vettal.trademarketing.features.usuarios.constants.UsuarioConstants;
+import ve.com.vettal.trademarketing.features.usuarios.dto.UsuarioEstadoRequestDto;
 import ve.com.vettal.trademarketing.features.usuarios.dto.UsuarioRequestDto;
 import ve.com.vettal.trademarketing.features.usuarios.dto.UsuarioResponseDto;
 import ve.com.vettal.trademarketing.features.usuarios.service.UsuarioService;
@@ -61,5 +63,14 @@ public class UsuarioController {
 	public ResponseEntity<ApiResponseDto<Void>> eliminar(@PathVariable Long id) {
 		usuarioService.eliminar(id);
 		return ResponseEntity.ok(ApiResponseDto.ok(null, "Usuario desactivado"));
+	}
+
+	@PatchMapping("/{id}/estado")
+	@PreAuthorize(UsuarioConstants.ROLES_ADMIN)
+	public ResponseEntity<ApiResponseDto<UsuarioResponseDto>> cambiarEstado(
+			@PathVariable Long id, @Valid @RequestBody UsuarioEstadoRequestDto request) {
+		UsuarioResponseDto usuario = usuarioService.cambiarEstado(id, request.getActivo());
+		String mensaje = request.getActivo() ? "Usuario activado" : "Usuario desactivado";
+		return ResponseEntity.ok(ApiResponseDto.ok(usuario, mensaje));
 	}
 }
