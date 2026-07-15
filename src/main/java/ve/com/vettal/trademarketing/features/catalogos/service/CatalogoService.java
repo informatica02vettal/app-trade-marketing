@@ -11,6 +11,8 @@ import ve.com.vettal.trademarketing.features.catalogos.dto.CategoriaMaterialResp
 import ve.com.vettal.trademarketing.features.catalogos.dto.CategoriaProductoMercadoResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaRequestDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaResponseDto;
+import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaEstadoRequestDto;
+import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaRequestDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MaterialResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.RegionRequestDto;
@@ -41,8 +43,37 @@ public class CatalogoService {
 	private final RegionRepository regionRepository;
 	private final CatalogoMapper catalogoMapper;
 
+	// Devuelve todas las marcas (activas e inactivas): el admin necesita ver
+	// y poder reactivar una marca desactivada. Quien solo debe ver marcas
+	// activas (la app de mercaderistas) filtra del lado del cliente, igual
+	// que ya se hace con las marcas de competencia.
 	public List<MarcaResponseDto> listarMarcas() {
-		return catalogoMapper.toMarcaDtoList(marcaRepository.findByActivoTrue());
+		return catalogoMapper.toMarcaDtoList(marcaRepository.findAllByOrderByNombreAsc());
+	}
+
+	@Transactional
+	public MarcaResponseDto crearMarca(MarcaRequestDto request) {
+		if (marcaRepository.existsByCodigoIgnoreCase(request.getCodigo())) {
+			throw new BusinessException("Ya existe una marca con ese código");
+		}
+
+		MarcaModel marca = MarcaModel.builder()
+				.codigo(request.getCodigo())
+				.nombre(request.getNombre())
+				.build();
+
+		return catalogoMapper.toDto(marcaRepository.save(marca));
+	}
+
+	// Solo cambia activo/inactivo, sin revalidar código/nombre — evita el
+	// mismo problema que tuvimos con usuarios: reactivar una marca nunca
+	// debe depender de que el resto de sus datos siga pasando validación.
+	@Transactional
+	public MarcaResponseDto cambiarEstadoMarca(Long id, boolean activo) {
+		MarcaModel marca = marcaRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada con id " + id));
+		marca.setActivo(activo);
+		return catalogoMapper.toDto(marcaRepository.save(marca));
 	}
 
 	public List<MarcaCompetenciaResponseDto> listarCompetencia(Long marcaId) {

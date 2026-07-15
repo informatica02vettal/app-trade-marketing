@@ -21,6 +21,8 @@ import ve.com.vettal.trademarketing.features.catalogos.dto.CategoriaMaterialResp
 import ve.com.vettal.trademarketing.features.catalogos.dto.CategoriaProductoMercadoResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaRequestDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaResponseDto;
+import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaEstadoRequestDto;
+import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaRequestDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MaterialResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.RegionEstadoRequestDto;
@@ -48,6 +50,22 @@ public class CatalogoController {
 	@GetMapping("/marcas")
 	public ResponseEntity<ApiResponseDto<List<MarcaResponseDto>>> listarMarcas() {
 		return ResponseEntity.ok(ApiResponseDto.ok(catalogoService.listarMarcas(), "Marcas obtenidas"));
+	}
+
+	@PostMapping("/marcas")
+	@PreAuthorize(UsuarioConstants.ROLES_ADMIN_SUPERVISOR)
+	public ResponseEntity<ApiResponseDto<MarcaResponseDto>> crearMarca(@Valid @RequestBody MarcaRequestDto request) {
+		MarcaResponseDto marca = catalogoService.crearMarca(request);
+		return ResponseEntity.status(201).body(ApiResponseDto.created(marca, "Marca creada"));
+	}
+
+	@PatchMapping("/marcas/{id}/estado")
+	@PreAuthorize(UsuarioConstants.ROLES_ADMIN_SUPERVISOR)
+	public ResponseEntity<ApiResponseDto<MarcaResponseDto>> cambiarEstadoMarca(
+			@PathVariable Long id, @Valid @RequestBody MarcaEstadoRequestDto request) {
+		MarcaResponseDto marca = catalogoService.cambiarEstadoMarca(id, request.getActivo());
+		String mensaje = request.getActivo() ? "Marca activada" : "Marca desactivada";
+		return ResponseEntity.ok(ApiResponseDto.ok(marca, mensaje));
 	}
 
 	@GetMapping("/marcas/{marcaId}/competencia")

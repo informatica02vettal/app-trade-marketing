@@ -7,4 +7,8 @@ import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
 public interface MarcaRepository extends JpaRepository<MarcaModel, Long> {
 
 	List<MarcaModel> findByActivoTrue();
+
+	List<MarcaModel> findAllByOrderByNombreAsc();
+
+	boolean existsByCodigoIgnoreCase(String codigo);
 }
