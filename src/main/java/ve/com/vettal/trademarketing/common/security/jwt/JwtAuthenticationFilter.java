@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -51,6 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				// la siguiente petición, en vez de esperar a que el token expire.
 				if (!userDetails.isEnabled()) {
 					SecurityContextHolder.clearContext();
+					log.warn("Petición rechazada: usuario bloqueado '{}' en {} {}", username, request.getMethod(), request.getRequestURI());
 					responderUsuarioBloqueado(request, response);
 					return;
 				}
@@ -63,6 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				}
 			}
 		} catch (io.jsonwebtoken.JwtException | IllegalArgumentException ex) {
+			log.warn("Token inválido o expirado en {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
 			SecurityContextHolder.clearContext();
 		}
 
