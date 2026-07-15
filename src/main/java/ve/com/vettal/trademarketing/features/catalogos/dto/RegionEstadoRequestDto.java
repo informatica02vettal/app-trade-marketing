@@ -1,18 +1,15 @@
 package ve.com.vettal.trademarketing.features.catalogos.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegionResponseDto {
+public class RegionEstadoRequestDto {
 
-	private Long id;
-	private String nombre;
-	private String detalles;
-	private boolean activo;
+	@NotNull(message = "El estado activo/inactivo es obligatorio")
+	private Boolean activo;
 }

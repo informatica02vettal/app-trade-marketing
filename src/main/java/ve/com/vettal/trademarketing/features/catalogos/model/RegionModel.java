@@ -26,4 +26,11 @@ public class RegionModel {
 
 	@Column(name = "nombre", nullable = false, length = 60)
 	private String nombre;
+
+	@Column(name = "detalles", length = 255)
+	private String detalles;
+
+	@Builder.Default
+	@Column(name = "activo", nullable = false)
+	private boolean activo = true;
 }

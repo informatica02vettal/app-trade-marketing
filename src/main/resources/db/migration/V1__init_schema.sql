@@ -555,6 +555,8 @@ ALTER TABLE eventos_visita
 CREATE TABLE regiones (
     id      BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombre  VARCHAR(60) NOT NULL,
+    detalles varchar(255) NULL,
+    activo TINYINT(1) NOT NULL DEFAULT 1,
     CONSTRAINT uk_regiones_nombre UNIQUE (nombre)
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_spanish_ci;
 

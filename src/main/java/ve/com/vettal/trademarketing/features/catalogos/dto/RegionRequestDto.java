@@ -1,18 +1,17 @@
 package ve.com.vettal.trademarketing.features.catalogos.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegionResponseDto {
+public class RegionRequestDto {
 
-	private Long id;
+	@NotBlank(message = "El nombre es obligatorio")
 	private String nombre;
+
 	private String detalles;
-	private boolean activo;
 }

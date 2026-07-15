@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +23,8 @@ import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaReque
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MaterialResponseDto;
+import ve.com.vettal.trademarketing.features.catalogos.dto.RegionEstadoRequestDto;
+import ve.com.vettal.trademarketing.features.catalogos.dto.RegionRequestDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.RegionResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.model.FamiliaMaterial;
 import ve.com.vettal.trademarketing.features.catalogos.service.CatalogoService;
@@ -92,5 +95,29 @@ public class CatalogoController {
 	@GetMapping("/regiones")
 	public ResponseEntity<ApiResponseDto<List<RegionResponseDto>>> listarRegiones() {
 		return ResponseEntity.ok(ApiResponseDto.ok(catalogoService.listarRegiones(), "Regiones obtenidas"));
+	}
+
+	@PostMapping("/regiones")
+	@PreAuthorize(UsuarioConstants.ROLES_ADMIN_SUPERVISOR)
+	public ResponseEntity<ApiResponseDto<RegionResponseDto>> crearRegion(@Valid @RequestBody RegionRequestDto request) {
+		RegionResponseDto region = catalogoService.crearRegion(request);
+		return ResponseEntity.status(201).body(ApiResponseDto.created(region, "Región creada"));
+	}
+
+	@PutMapping("/regiones/{id}")
+	@PreAuthorize(UsuarioConstants.ROLES_ADMIN_SUPERVISOR)
+	public ResponseEntity<ApiResponseDto<RegionResponseDto>> actualizarRegion(
+			@PathVariable Long id, @Valid @RequestBody RegionRequestDto request) {
+		RegionResponseDto region = catalogoService.actualizarRegion(id, request);
+		return ResponseEntity.ok(ApiResponseDto.ok(region, "Región actualizada"));
+	}
+
+	@PatchMapping("/regiones/{id}/estado")
+	@PreAuthorize(UsuarioConstants.ROLES_ADMIN_SUPERVISOR)
+	public ResponseEntity<ApiResponseDto<RegionResponseDto>> cambiarEstadoRegion(
+			@PathVariable Long id, @Valid @RequestBody RegionEstadoRequestDto request) {
+		RegionResponseDto region = catalogoService.cambiarEstadoRegion(id, request.getActivo());
+		String mensaje = request.getActivo() ? "Región activada" : "Región desactivada";
+		return ResponseEntity.ok(ApiResponseDto.ok(region, mensaje));
 	}
 }

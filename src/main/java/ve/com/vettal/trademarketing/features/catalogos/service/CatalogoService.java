@@ -13,12 +13,14 @@ import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaReque
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaCompetenciaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MarcaResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.MaterialResponseDto;
+import ve.com.vettal.trademarketing.features.catalogos.dto.RegionRequestDto;
 import ve.com.vettal.trademarketing.features.catalogos.dto.RegionResponseDto;
 import ve.com.vettal.trademarketing.features.catalogos.mapper.CatalogoMapper;
 import ve.com.vettal.trademarketing.features.catalogos.model.CategoriaMaterialModel;
 import ve.com.vettal.trademarketing.features.catalogos.model.FamiliaMaterial;
 import ve.com.vettal.trademarketing.features.catalogos.model.MarcaCompetenciaModel;
 import ve.com.vettal.trademarketing.features.catalogos.model.MarcaModel;
+import ve.com.vettal.trademarketing.features.catalogos.model.RegionModel;
 import ve.com.vettal.trademarketing.features.catalogos.repository.CategoriaMaterialRepository;
 import ve.com.vettal.trademarketing.features.catalogos.repository.CategoriaProductoMercadoRepository;
 import ve.com.vettal.trademarketing.features.catalogos.repository.MarcaCompetenciaRepository;
@@ -99,5 +101,46 @@ public class CatalogoService {
 
 	public List<RegionResponseDto> listarRegiones() {
 		return catalogoMapper.toRegionDtoList(regionRepository.findAllByOrderByNombreAsc());
+	}
+
+	@Transactional
+	public RegionResponseDto crearRegion(RegionRequestDto request) {
+		if (regionRepository.existsByNombreIgnoreCase(request.getNombre())) {
+			throw new BusinessException("Ya existe una región con ese nombre");
+		}
+
+		RegionModel region = RegionModel.builder()
+				.nombre(request.getNombre())
+				.detalles(request.getDetalles())
+				.build();
+
+		return catalogoMapper.toDto(regionRepository.save(region));
+	}
+
+	@Transactional
+	public RegionResponseDto actualizarRegion(Long id, RegionRequestDto request) {
+		RegionModel region = regionRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Región no encontrada con id " + id));
+
+		if (!region.getNombre().equalsIgnoreCase(request.getNombre())
+				&& regionRepository.existsByNombreIgnoreCase(request.getNombre())) {
+			throw new BusinessException("Ya existe una región con ese nombre");
+		}
+
+		region.setNombre(request.getNombre());
+		region.setDetalles(request.getDetalles());
+
+		return catalogoMapper.toDto(regionRepository.save(region));
+	}
+
+	// Solo cambia activo/inactivo, igual que UsuarioService.cambiarEstado —
+	// nunca borra la región, así una vez usada como región de un cliente o
+	// mercaderista no desaparece su historial ni el nombre queda huérfano.
+	@Transactional
+	public RegionResponseDto cambiarEstadoRegion(Long id, boolean activo) {
+		RegionModel region = regionRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Región no encontrada con id " + id));
+		region.setActivo(activo);
+		return catalogoMapper.toDto(regionRepository.save(region));
 	}
 }

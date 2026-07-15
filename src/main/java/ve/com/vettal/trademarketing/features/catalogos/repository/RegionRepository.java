@@ -7,4 +7,6 @@ import ve.com.vettal.trademarketing.features.catalogos.model.RegionModel;
 public interface RegionRepository extends JpaRepository<RegionModel, Long> {
 
 	List<RegionModel> findAllByOrderByNombreAsc();
+
+	boolean existsByNombreIgnoreCase(String nombre);
 }
