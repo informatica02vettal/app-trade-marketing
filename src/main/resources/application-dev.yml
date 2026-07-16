@@ -18,18 +18,18 @@ cors:
 app:
   admin-seed:
     email: admin
-    password: "Vettal.3030"
+    password: Vettal.3030
     nombre: Administrador
   storage:
     base-path: ./media
   clientes-api:
     base-url: http://192.168.1.2:8080
     username: admin
-    password: "30.60"
+    password: 30.60
     connect-timeout-ms: 5000
     read-timeout-ms: 10000
   productos-api:
-    base-url: https://192.168.1.2:8001/vettal/apis_vettal/api/v1.php
+    base-url: https://vettal.ddns.net:8001/vettal/apis_vettal/api/v1.php
     api-key: KrXbUQLgSk2cB384I1xP
     tabla: lista_prod_pw
     connect-timeout-ms: 5000
