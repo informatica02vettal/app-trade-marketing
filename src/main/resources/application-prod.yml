@@ -9,9 +9,8 @@ spring:
 jwt:
   secret: oWO1Qjb1b9w7pulkskITDO8XrlI3I08uH3tXa3qyKnpDOmjfJODc16tfMZ25Zj
 
-# TODO: restringir a la URL real del frontend en producción (hoy abierto con "*").
 cors:
-  allowed-origins: "*"
+  allowed-origins: "https://vettal.ddns.net"
 
 app:
   admin-seed:
