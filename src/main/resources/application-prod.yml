@@ -17,7 +17,7 @@ jwt:
   secret: oWO1Qjb1b9w7pulkskITDO8XrlI3I08uH3tXa3qyKnpDOmjfJODc16tfMZ25Zj
 
 cors:
-  allowed-origins: "http://vettal.ddns.net"
+  allowed-origins: "https://vettal.ddns.net:4201"
 
 app:
   admin-seed:
