@@ -17,12 +17,12 @@ jwt:
   secret: oWO1Qjb1b9w7pulkskITDO8XrlI3I08uH3tXa3qyKnpDOmjfJODc16tfMZ25Zj
 
 cors:
-  allowed-origins: "https://vettal.ddns.net"
+  allowed-origins: "http://vettal.ddns.net"
 
 app:
   admin-seed:
     email: admin@vettal.com.ve
-    password: Vettal.3030
+    password: "Vettal.3030"
     nombre: Administrador
   storage:
     base-path: ./media
