@@ -2,7 +2,7 @@ spring:
   application:
     name: app-trade-marketing
   profiles:
-    active: dev
+    active: prod
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
