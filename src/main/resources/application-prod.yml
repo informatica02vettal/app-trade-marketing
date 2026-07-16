@@ -6,6 +6,13 @@ spring:
   jpa:
     show-sql: false
 
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    certificate: file:M:/web/certificado/server.crt
+    certificate-private-key: file:M:/web/certificado/server.key
+
 jwt:
   secret: oWO1Qjb1b9w7pulkskITDO8XrlI3I08uH3tXa3qyKnpDOmjfJODc16tfMZ25Zj
 
